@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="Home" />
+        <item
+            android:id="@+id/update_add"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="Add" />
+        <item
+            android:id="@+id/view_data"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="View Data" />
+        <item
+            android:id="@+id/edit"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="Edit" />
+        <item
+            android:id="@+id/pr"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="PR's" />
+        <item
+            android:id="@+id/atributions"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:fontFamily="@font/ubuntu"
+            android:title="Atributions" />
+    </group>
+</menu>
