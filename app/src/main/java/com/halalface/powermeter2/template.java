@@ -9,22 +9,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
+public class template extends AppCompatActivity {
     DrawerLayout drawerLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -115,5 +106,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         return true;
     }
-
 }
