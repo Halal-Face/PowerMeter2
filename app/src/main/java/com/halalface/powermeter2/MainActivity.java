@@ -24,6 +24,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
+    private ArrayList<String> names = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
+
+
 
 
 
@@ -57,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        //TEST
+        for(int i =0; i<30;i++){
+            names.add("String Test: " + i + " Test");
+        }
+        initRecyclerView();
+
+    }
+
+    private void initRecyclerView(){
+        RecyclerView recyclerView = findViewById(R.id.r_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(names, getApplicationContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
