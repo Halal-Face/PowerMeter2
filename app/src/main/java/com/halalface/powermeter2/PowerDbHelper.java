@@ -97,7 +97,7 @@ public class PowerDbHelper extends SQLiteOpenHelper {
     public void deleteItem(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
-                COL1 + " = '" + id;
+                COL1 + " = '" + id+"'";
         db.execSQL(query);
         //Log.d(TAG, "QUERY DELETE: " + query);
     }
