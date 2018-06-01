@@ -81,6 +81,13 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
+
+        groupViewHolder.tvTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO Implement: go to another activity with indepth info on the exercise
+            }
+        });
         final ExpandableListView eLV = (ExpandableListView) parent;
         groupViewHolder.tvTitle.setText(groupItem.get(groupPosition).getTitle());
         if(getChildrenCount(groupPosition)==0) {
@@ -172,5 +179,6 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
     private class ChildViewHolder {
         public EditText et;
     }
+
 
 }
