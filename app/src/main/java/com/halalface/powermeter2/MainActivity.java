@@ -1,5 +1,6 @@
 package com.halalface.powermeter2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,22 +10,28 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.Toast;
 
-import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 
 import java.util.ArrayList;
 import java.util.List;
+//code for expandable view from https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android
 
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
-    private ArrayList<String> names = new ArrayList<>();
+    ArrayList<ListItemModel> arrayList;
+
+    ExpandableListView elv;
+    CustomListAdapter adapter;
 
 
     @Override
@@ -39,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
-
-
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,20 +64,41 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        //TEST
-        for(int i =0; i<30;i++){
-            names.add("String Test: " + i + " Test");
-        }
-        initRecyclerView();
+        arrayList = new ArrayList<>();
+        arrayList.add(new ListItemModel("Curls"));
+        arrayList.add(new ListItemModel("Bench"));
+        arrayList.add(new ListItemModel("Deadlift"));
+        arrayList.add(new ListItemModel("Squats"));
+        arrayList.add(new ListItemModel("Other stuff"));
+
+        elv = (ExpandableListView)findViewById(R.id.listview);
+        adapter = new CustomListAdapter(MainActivity.this, arrayList);
+        adapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+        elv.setAdapter(adapter);
+
+        Button btn = (Button)findViewById(R.id.show);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String all="";
+                for (int i=0; i<arrayList.size(); i++){
+                    if (arrayList.get(i).getArrayList().size()==3) {
+                        all += arrayList.get(i).getTitle()+"\n";
+                        all += arrayList.get(i).getArrayList().get(0).getValue() +"\n";
+                        all += arrayList.get(i).getArrayList().get(1).getValue() +"\n";
+                        all += arrayList.get(i).getArrayList().get(2).getValue() +"\n";
+                    }
+                }
+                Toast.makeText(MainActivity.this, all, Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+
 
     }
 
-    private void initRecyclerView(){
-        RecyclerView recyclerView = findViewById(R.id.r_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(names, getApplicationContext());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
 
 
     @Override
