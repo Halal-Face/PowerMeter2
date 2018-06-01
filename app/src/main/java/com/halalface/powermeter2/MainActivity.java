@@ -1,11 +1,14 @@
 package com.halalface.powermeter2;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,27 +20,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.List;
+
 //code for expandable view from https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android
 
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     ArrayList<ListItemModel> arrayList;
+    FloatingActionButton add;
 
+    FloatingActionButton save;
     ExpandableListView elv;
     CustomListAdapter adapter;
+    Dialog dialog;
+    EditText new_name;
 
+    MasterDbHelper mMasterDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dialog = new Dialog(this);
+        showAddNamePopUp();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -46,14 +61,9 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -65,11 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         arrayList = new ArrayList<>();
-        arrayList.add(new ListItemModel("Curls"));
-        arrayList.add(new ListItemModel("Bench"));
-        arrayList.add(new ListItemModel("Deadlift"));
-        arrayList.add(new ListItemModel("Squats"));
-        arrayList.add(new ListItemModel("Other stuff"));
+
 
         elv = (ExpandableListView)findViewById(R.id.listview);
         adapter = new CustomListAdapter(MainActivity.this, arrayList);
@@ -95,8 +101,80 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        add = findViewById(R.id.add);
+        add.show();
+        add.setClickable(true);
 
 
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+               dialog.show();
+
+            }
+        });
+
+
+
+        populateArrayList();
+    }
+
+    public void showAddNamePopUp(){
+
+        dialog.setContentView(R.layout.add_name_pop_up);
+
+
+        new_name = dialog.findViewById(R.id.new_name);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        save = (FloatingActionButton) dialog.findViewById(R.id.save);
+        save.show();
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
+                String new_name_to_add = new_name.getText().toString().replaceAll(" ", "_");
+                if(!new_name_to_add.matches("")) {
+                    AddData(new_name_to_add.replaceAll(" ", "_"));
+                    PowerDbHelper pPowerDbHelper = new PowerDbHelper(getApplicationContext(), new_name_to_add.replaceAll(" ", "_"));
+                    dialog.dismiss();
+                    dialog.hide();
+                }
+                else{
+                    toastM("Please Enter a Valid name :(");
+                }
+            }
+        });
+
+    }
+
+    public void AddData(String newEntry){
+        boolean insert = mMasterDbHelper.addData(newEntry);
+        if(insert){
+            toastM("Success");
+
+        }else{
+            toastM("Exercise already exists");
+        }
+    }
+    private void toastM(String m){
+        Toast.makeText(this, m, Toast.LENGTH_SHORT).show();
+    }
+
+    private void populateArrayList(){
+        //get iterator for data
+        Cursor data = mMasterDbHelper.getData();
+        //add the data from to the arraylsit
+        ArrayList<String> listData = new ArrayList<>();
+        while(data.moveToNext()){
+            listData.add(data.getString(1));
+            arrayList.add(new ListItemModel( data.getString(1).replaceAll("_", " ")));
+
+        }
+        //used to populate the listview
+        //ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
     }
 
 
