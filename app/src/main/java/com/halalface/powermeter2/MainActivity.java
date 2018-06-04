@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add New Entries</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
@@ -232,32 +232,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(getApplicationContext(), MainActivity.class);
         switch (menuItem.getItemId()) {
-            case R.id.home:
+            case R.id.add_data:
                 //System.out.println("MENU ITEM CLICKED " +"home" );
+                intent = new Intent(getApplicationContext(), MainActivity.class);
                 break;
-            case R.id.update_add:
+            case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
                 intent = new Intent(getApplicationContext(),  MainActivity.class);
                 break;
 
-            case R.id.view_data:
+            case R.id.atributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
                 intent = new Intent(getApplicationContext(),  MainActivity.class);
                 break;
 
-            case R.id.edit:
-                //System.out.println("MENU ITEM CLICKED " +"edit");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
-
-            case R.id.pr:
-                //System.out.println("MENU ITEM CLICKED " +"pr");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
-            case R.id.atributions:
-                //System.out.println("MENU ITEM CLICKED " +"pr");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
         }
         startActivity(intent);
         return true;

@@ -15,11 +15,18 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/ubuntu</item>
+        <item name ="android:colorButtonNormal">@color/shade3</item>
+        <item name ="android:textAppearanceButton">@style/Button</item>
 
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" >
         <item name="android:textColor">@color/shade1</item>
+    </style>
+    <style name="Button" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/shade1</item>
+       <item name="android:textSize">20dp</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

@@ -79,20 +79,14 @@ public class template extends AppCompatActivity {
             case R.id.home:
                 //System.out.println("MENU ITEM CLICKED " +"home" );
                 break;
-            case R.id.update_add:
-                //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
+
 
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
                 intent = new Intent(getApplicationContext(),  MainActivity.class);
                 break;
 
-            case R.id.edit:
-                //System.out.println("MENU ITEM CLICKED " +"edit");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
+
 
             case R.id.pr:
                 //System.out.println("MENU ITEM CLICKED " +"pr");

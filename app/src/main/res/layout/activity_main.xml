@@ -39,12 +39,20 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingLeft="20dp"
                         >
+
                         <Button
-                        android:id="@+id/show"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Show Values"/>
+                            android:id="@+id/show"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Add Values"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:textAlignment="center" />
 
                         <ExpandableListView
                             android:id="@+id/listview"

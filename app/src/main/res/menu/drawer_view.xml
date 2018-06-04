@@ -2,25 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/home"
+            android:id="@+id/add_data"
             android:icon="@drawable/ic_launcher_foreground"
             android:fontFamily="@font/ubuntu"
-            android:title="Home" />
-        <item
-            android:id="@+id/update_add"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:fontFamily="@font/ubuntu"
-            android:title="Add" />
+            android:title="Add Data" />
         <item
             android:id="@+id/view_data"
             android:icon="@drawable/ic_launcher_foreground"
             android:fontFamily="@font/ubuntu"
             android:title="View Data" />
-        <item
-            android:id="@+id/edit"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:fontFamily="@font/ubuntu"
-            android:title="Edit" />
+
+
         <item
             android:id="@+id/pr"
             android:icon="@drawable/ic_launcher_foreground"
