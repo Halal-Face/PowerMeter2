@@ -45,30 +45,16 @@
                         android:text="**Exercise Name**"
                         android:textAlignment="center" />
 
-                    <TableLayout
+                    <ListView
+                        android:id="@+id/l_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="55dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginBottom="55dp"
                         android:layout_marginTop="55dp">
 
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </TableLayout>
+                    </ListView>
 
                 </LinearLayout>
 

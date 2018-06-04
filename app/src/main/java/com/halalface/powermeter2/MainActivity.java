@@ -29,7 +29,9 @@ import android.widget.ListAdapter;
 import android.widget.Toast;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 //code for expandable view from https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     EditText new_name;
 
     MasterDbHelper mMasterDbHelper;
+    PowerDbHelper mPowerDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +91,41 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String all="";
                 for (int i=0; i<arrayList.size(); i++){
-                    if (arrayList.get(i).getArrayList().size()==3) {
+                    if (elv.isGroupExpanded(i)) {
                         all += arrayList.get(i).getTitle()+"\n";
                         all += arrayList.get(i).getArrayList().get(0).getValue() +"\n";
                         all += arrayList.get(i).getArrayList().get(1).getValue() +"\n";
                         all += arrayList.get(i).getArrayList().get(2).getValue() +"\n";
+
+                        if( arrayList.get(i).getArrayList().get(0).getValue().matches("")
+                                || arrayList.get(i).getArrayList().get(1).getValue().matches("")
+                                || arrayList.get(i).getArrayList().get(2).getValue().matches("")){
+                            //Toast.makeText(MainActivity.this, "Enter Valid Entries", Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                         mPowerDbHelper = new PowerDbHelper(getApplicationContext(), arrayList.get(i).getTitle().replaceAll(" ", "_"));
+                         int weight = Integer.parseInt(arrayList.get(i).getArrayList().get(0).getValue());
+                         int rep = Integer.parseInt(arrayList.get(i).getArrayList().get(1).getValue());
+                         int set = Integer.parseInt(arrayList.get(i).getArrayList().get(2).getValue());
+                         int power = weight*rep*set;
+                         if(power ==0 || power<0){
+                             Toast.makeText(MainActivity.this, "Power is less then or equal to 0", Toast.LENGTH_LONG).show();
+                         }
+                         else{
+                             SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
+                             //System.out.println(f.format(new Date()));
+                             int date = Integer.parseInt(f.format(new Date()));
+                             mPowerDbHelper.addData(power,date);
+                             Toast.makeText(MainActivity.this, power+"", Toast.LENGTH_LONG).show();
+                         }
+                        }
                     }
                 }
-                Toast.makeText(MainActivity.this, all, Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, all, Toast.LENGTH_LONG).show();
             }
         });
+
+
 
 
 

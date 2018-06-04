@@ -1,6 +1,7 @@
 package com.halalface.powermeter2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -30,6 +32,11 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
         this.mContext = context;
         this.groupItem = groupItem;
     }
+
+    public ArrayList<ListItemModel> getGroupItem() {
+        return groupItem;
+    }
+
 
     public void setInflater(LayoutInflater mInflater) {
         this.minflater = mInflater;
@@ -113,6 +120,20 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
 
                     groupItem.get(groupPosition).toggle = !groupItem.get(groupPosition).toggle;
                 }
+            }
+        });
+
+        groupViewHolder.tvTitle.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                String name = groupItem.get(groupPosition).getTitle().replaceAll(" ", "_");
+
+                Intent intent = new Intent(mContext, ExerciseInDepth.class);
+                intent.putExtra("name", name);
+                Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
+                mContext.startActivity(intent);
+
             }
         });
 
