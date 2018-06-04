@@ -1,5 +1,6 @@
 package com.halalface.powermeter2;
 
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
         }
-        startActivity(intent);
+        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         return true;
     }
 

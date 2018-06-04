@@ -1,5 +1,7 @@
 package com.halalface.powermeter2;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -132,7 +134,9 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
                 Intent intent = new Intent(mContext, ExerciseInDepth.class);
                 intent.putExtra("name", name);
                 Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
-                mContext.startActivity(intent);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity)mContext, v,"add");
+
+                mContext.startActivity(intent,options.toBundle());
 
             }
         });

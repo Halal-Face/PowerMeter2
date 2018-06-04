@@ -47,7 +47,7 @@ public class ExerciseInDepth extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
