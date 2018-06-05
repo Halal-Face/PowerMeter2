@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
             case R.id.atributions:

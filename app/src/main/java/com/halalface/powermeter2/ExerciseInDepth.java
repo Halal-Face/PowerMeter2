@@ -1,8 +1,11 @@
 package com.halalface.powermeter2;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -17,8 +20,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,12 +37,19 @@ public class ExerciseInDepth extends AppCompatActivity {
     ListView power_entries_ListView;
     TextView exercise_name_TextView;
     String exercise_name;
+    Dialog dialog;
     PowerDbHelper mPowerDbHelper;
+    MasterDbHelper mMasterDbHelper;
+    EditText new_name_EditText;
+    int date;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.exercise_in_depth);
+
+        dialog = new Dialog(this);
+        showEditDelete();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -46,6 +59,8 @@ public class ExerciseInDepth extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
+
+        System.out.println("DATE: substring !!" + date +"!!");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,13 +99,73 @@ public class ExerciseInDepth extends AppCompatActivity {
                 if(mtoast!=null){
                     mtoast.show();
                 }
+                dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+                dialog.show();
                 mtoast.show();
+                String item = parent.getItemAtPosition(position).toString();
+                date = Integer.parseInt(item.substring(6, 14));
                 return false;
             }
         });
 
     }
 
+    public void showEditDelete(){
+
+        dialog.setContentView(R.layout.edit_delete_popup);
+
+        Button delete = dialog.findViewById(R.id.delete);
+        new_name_EditText = dialog.findViewById(R.id.new_name);
+        new_name_EditText.setHint("New Power entry");
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        FloatingActionButton save = (FloatingActionButton) dialog.findViewById(R.id.save);
+        save.show();
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
+                String new_name_to_add = new_name_EditText.getText().toString().replaceAll(" ", "_");
+                if(!new_name_to_add.matches("")) {
+
+                    System.out.println("NAME: " + exercise_name);
+                    int newItem = Integer.parseInt(new_name_to_add);
+
+                    Cursor data = mPowerDbHelper.getItemID(date);
+                    int itemID = -1;
+                    if(data.moveToNext()){
+                        itemID = data.getInt(0);
+                    }
+                    if(itemID>-1){
+                        String TABLE_NAME = mPowerDbHelper.getTABLE_NAME();
+
+                    }
+
+
+                    mPowerDbHelper.updateItem(newItem, itemID);
+
+                    dialog.dismiss();
+                    dialog.hide();
+                }
+
+
+
+
+
+
+
+
+                else{
+                    toastM("Please Enter a Valid name :(");
+                }
+            }
+        });
+
+    }
+
+    private void toastM(String m){
+        Toast.makeText(this, m, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
