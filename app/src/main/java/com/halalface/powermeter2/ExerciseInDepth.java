@@ -41,12 +41,16 @@ public class ExerciseInDepth extends AppCompatActivity {
     PowerDbHelper mPowerDbHelper;
     MasterDbHelper mMasterDbHelper;
     EditText new_name_EditText;
+    FloatingActionButton add;
+    FloatingActionButton delete;
     int date;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.exercise_in_depth);
+
+        mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
         dialog = new Dialog(this);
         showEditDelete();
@@ -105,6 +109,28 @@ public class ExerciseInDepth extends AppCompatActivity {
                 String item = parent.getItemAtPosition(position).toString();
                 date = Integer.parseInt(item.substring(6, 14));
                 return false;
+            }
+        });
+
+        add = findViewById(R.id.add);
+        delete = findViewById(R.id.delete);
+
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMasterDbHelper.deleteItem(exercise_name);
+                ExerciseInDepth.this.deleteDatabase(exercise_name);
+                Intent intent = new Intent(getApplicationContext(),  MainActivity.class);
+                startActivity(intent);
+
             }
         });
 
@@ -198,12 +224,12 @@ public class ExerciseInDepth extends AppCompatActivity {
                 break;
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
-            case R.id.atributions:
+            case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  Attributions.class);
                 break;
 
         }

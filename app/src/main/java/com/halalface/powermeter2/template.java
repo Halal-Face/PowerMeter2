@@ -1,6 +1,7 @@
 package com.halalface.powermeter2;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -87,18 +89,20 @@ public class template extends AppCompatActivity {
                 intent = new Intent(getApplicationContext(),  MainActivity.class);
                 break;
 
-
-
-            case R.id.pr:
-                //System.out.println("MENU ITEM CLICKED " +"pr");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
-                break;
-            case R.id.atributions:
+            case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"pr");
                 intent = new Intent(getApplicationContext(),  MainActivity.class);
                 break;
         }
         startActivity(intent);
         return true;
+    }
+    @SuppressWarnings("deprecation")
+    public Spanned setHtml(String html){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(html);
+        }
     }
 }

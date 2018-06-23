@@ -12,16 +12,10 @@
             android:fontFamily="@font/ubuntu"
             android:title="View Data" />
 
-
         <item
-            android:id="@+id/pr"
+            android:id="@+id/attributions"
             android:icon="@drawable/ic_launcher_foreground"
             android:fontFamily="@font/ubuntu"
-            android:title="PR's" />
-        <item
-            android:id="@+id/atributions"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:fontFamily="@font/ubuntu"
-            android:title="Atributions" />
+            android:title="Attributions" />
     </group>
 </menu>

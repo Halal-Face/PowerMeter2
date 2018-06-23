@@ -2,56 +2,42 @@ package com.halalface.powermeter2;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
-import android.view.MenuItem;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import org.w3c.dom.Attr;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GraphData extends AppCompatActivity {
-
+public class Attributions extends AppCompatActivity {
     DrawerLayout drawerLayout;
-    String TABLE_NAME;
-    PowerDbHelper pPowerDbHelper;
-    BarChart barChart;
-    ArrayList<Integer> xData;
-    ArrayList<Integer> yData;
+    TextView mpandroid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.graph_data);
+        setContentView(R.layout.attributions);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Your Data... But Graphed!</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>About</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
-
 
 
 
@@ -64,63 +50,26 @@ public class GraphData extends AppCompatActivity {
                     }
                 });
 
-        Intent receiveIntent = getIntent();
-        TABLE_NAME = receiveIntent.getStringExtra("TABLE_NAME");
-        pPowerDbHelper = new PowerDbHelper(GraphData.this, TABLE_NAME);
-        barChart = findViewById(R.id.barChart);
 
-        xData = pPowerDbHelper.getXData();
-        yData = pPowerDbHelper.getYData();
-        addData();
-
-    }
-
-    private void addData(){
-
-        List<BarEntry> entries = new ArrayList<>();
-
-        for (int i = 0; i < yData.size(); i++) {
-            entries.add(new BarEntry(xData.get(i), yData.get(i)));
-        }
-        System.out.println("YDATA: "+yData.size());
-        System.out.println("xDATA: "+xData.size());
-        BarDataSet dataSet = new BarDataSet(entries, "Relative Power");
-        dataSet.setColor(Color.parseColor("#FF9683"));
-        dataSet.setValueTextColor(Color.parseColor("#FF775F"));
-        dataSet.setDrawValues(true);
-        BarData barData = new BarData(dataSet);
-        barChart.setData(barData);
-        barChart.setTouchEnabled(false);
-        barChart.invalidate();
-        Description description = new Description();
-
-        description.setText("");
-        barChart.setDescription(description);
-
-        YAxis yLeft = barChart.getAxisLeft();
-        YAxis yRight = barChart.getAxisRight();
-        XAxis xAxis = barChart.getXAxis();
-
-        yLeft.setDrawLabels(false);
-        yLeft.setDrawGridLines(false);
-        yLeft.setDrawZeroLine(false);
-        yLeft.setDrawAxisLine(false);
-
-        yRight.setDrawLabels(false);
-        yRight.setDrawGridLines(false);
-        yRight.setDrawZeroLine(false);
-        yRight.setDrawAxisLine(false);
-
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawLabels(false);
-
-
+        mpandroid = findViewById(R.id.mpandroid);
+        String linkText1 = "PowerMeter is an app designed to track the relative power exerted over time when exercising. " +
+                "Currently only exercises that are quantifiable by weight and sets are supported. " +
+                "This app is open sourced and can be found at <a href='https://github.com/Halal-Face/PowerMeter'>github.com/Halal-Face</a> <br><br>"+
+                "Graphs are created via the  <a href='https://github.com/PhilJay/MPAndroidChart'>MPAndroidChart</a> library.<br><br>"+
+                "Expandable listview code from <a href='https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android'> bij-ace </a><br><br>";
+        mpandroid.setText(setHtml(linkText1));
+        mpandroid.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -132,7 +81,6 @@ public class GraphData extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
     public boolean nav(MenuItem menuItem){
         // set item as selected to persist highlight
         menuItem.setChecked(true);
@@ -147,12 +95,12 @@ public class GraphData extends AppCompatActivity {
                 break;
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
             case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  Attributions.class);
                 break;
 
         }
@@ -167,5 +115,4 @@ public class GraphData extends AppCompatActivity {
             return Html.fromHtml(html);
         }
     }
-
 }

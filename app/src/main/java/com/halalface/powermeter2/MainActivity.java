@@ -183,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
         boolean insert = mMasterDbHelper.addData(newEntry);
         if(insert){
             toastM("Success");
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
 
         }else{
             toastM("Exercise already exists");
@@ -242,9 +244,9 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
-            case R.id.atributions:
+            case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  Attributions.class);
                 break;
 
         }

@@ -57,9 +57,10 @@ public class MasterDbHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getItemID(String item){
+        String name = item.replaceAll(" ", "_");
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + COL1 + " FROM " + TABLE_NAME +
-                " WHERE " + COL2 + " = '" + item + "'";
+                " WHERE " + COL2 + " = '" + name + "'";
         Cursor data = db.rawQuery(query, null);
         return data;
     }
@@ -86,6 +87,11 @@ public class MasterDbHelper extends SQLiteOpenHelper {
                 " = '" + item + "'";
         db.execSQL(query);
         //Log.d(TAG, "QUERY DELETE: " + query);
+    }
+    public void deleteItem(String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_NAME + " WHERE " + COL2 + " = '" + name + "'";
+        db.execSQL(query);
     }
 
 }

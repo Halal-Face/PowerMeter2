@@ -3,7 +3,6 @@ package com.halalface.powermeter2;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 
 public class ViewData extends AppCompatActivity {
 
+    DrawerLayout mDrawerLayout;
     MasterDbHelper mMasterDbHelper;
     ListView mListView;
     DrawerLayout drawerLayout;
@@ -36,10 +36,10 @@ public class ViewData extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>View Data!</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add New Entries</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
-
+        mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -49,8 +49,6 @@ public class ViewData extends AppCompatActivity {
                         return nav(menuItem);
                     }
                 });
-
-
 
         mMasterDbHelper = new MasterDbHelper(this, "Exercise_Database");
         mListView = findViewById(R.id.listView);
@@ -112,12 +110,12 @@ public class ViewData extends AppCompatActivity {
                 break;
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
-            case R.id.atributions:
+            case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  Attributions.class);
                 break;
 
         }
