@@ -136,7 +136,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
                 Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation((Activity)mContext, v,"add");
 
-                mContext.startActivity(intent,options.toBundle());
+                mContext.startActivity(intent);
 
             }
         });
