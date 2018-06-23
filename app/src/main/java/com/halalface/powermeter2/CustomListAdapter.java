@@ -156,20 +156,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
             convertView.setTag(childViewHolder);
 
 
-            switch (childPosition){
-                case 0:
-                    childViewHolder.et.setHint("Weight");
-                    break;
-                case 1:
-                    childViewHolder.et.setHint("Rep");
-                    break;
-                case 2:
-                    childViewHolder.et.setHint("Set");
-                    break;
-                default:
-                    childViewHolder.et.setHint("Child: "+childPosition);
-                    break;
-            }
+
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
@@ -187,6 +174,21 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+
+        switch (childPosition){
+            case 0:
+                childViewHolder.et.setHint("Weight");
+                break;
+            case 1:
+                childViewHolder.et.setHint("Rep");
+                break;
+            case 2:
+                childViewHolder.et.setHint("Set");
+                break;
+            default:
+                childViewHolder.et.setHint("Child: "+childPosition);
+                break;
+        }
 
         return convertView;
     }
