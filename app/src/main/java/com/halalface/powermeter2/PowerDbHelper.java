@@ -73,19 +73,29 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public void updateItem(int newItem, int id, int oldItem){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "UPDATE " + TABLE_NAME + " SET " + COL2 +
-                " = '" + newItem +"' WHERE " + COL1 + " = '" +
-                id + "' AND " + COL2 + " = '" + oldItem + "'";
-        db.execSQL(query);
-    }
+
     public void updateItem(int newItem, int id){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "UPDATE " + TABLE_NAME + " SET " + COL2 +
                 " = '" + newItem +"' WHERE " + COL1 + " = '" + id +"'";
         db.execSQL(query);
     }
+    public boolean updateItem(int newPower, int old_date, int new_date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryCheck = "SELECT " + COL2 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + old_date + "'";
+        Cursor data = db.rawQuery(queryCheck, null);
+        if(data.moveToNext()){
+            String query = "UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + newPower + "' AND " +
+                    COL3 + " = '" + new_date +
+                    "' WHERE " + COL3 + " = '" + old_date +"'";
+            db.execSQL(query);
+            return true;
+        }
+        return false;
+    }
+
+
     public void deleteItem(int id, int item){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +

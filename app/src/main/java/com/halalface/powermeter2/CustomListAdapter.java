@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +23,21 @@ import java.util.ArrayList;
 public class CustomListAdapter extends BaseExpandableListAdapter {
 
     ArrayList<ListItemModel> groupItem;
-    Boolean toggle = false;
+
     GroupViewHolder groupViewHolder;
     ChildViewHolder childViewHolder;
+    View main_view;
+    Button date;
 
     Context mContext;
 
     public LayoutInflater minflater;
 
-    public CustomListAdapter(Context context, ArrayList<ListItemModel> groupItem) {
+    public CustomListAdapter(Context context, ArrayList<ListItemModel> groupItem, View view) {
         this.mContext = context;
         this.groupItem = groupItem;
+        main_view = view;
+        date = main_view.findViewById(R.id.calendar);
     }
 
     public ArrayList<ListItemModel> getGroupItem() {
@@ -80,23 +85,22 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, final ViewGroup parent) {
         if (convertView == null) {
             groupViewHolder = new GroupViewHolder();
             convertView = minflater.inflate(R.layout.list_header, null);
             groupViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.title);
             groupViewHolder.btnAdd = (Button) convertView.findViewById(R.id.addEdittext);
+
+
+
+
             convertView.setTag(groupViewHolder);
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
 
-        groupViewHolder.tvTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO Implement: go to another activity with indepth info on the exercise
-            }
-        });
+        final View cview = convertView;
         final ExpandableListView eLV = (ExpandableListView) parent;
         groupViewHolder.tvTitle.setText(groupItem.get(groupPosition).getTitle());
         if(getChildrenCount(groupPosition)==0) {
@@ -106,21 +110,30 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
             groupItem.get(groupPosition).getArrayList().add(new EdittextValues(""));
         }
 
+
         groupViewHolder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!groupItem.get(groupPosition).toggle) {
+
+                if(!eLV.isGroupExpanded(groupPosition)) {
                     eLV.expandGroup(groupPosition);
+                    date.setVisibility(View.VISIBLE);
 
                     getChildrenCount(groupPosition);
+                    groupViewHolder.btnAdd.setText("-");
                     notifyDataSetChanged();
-                    groupItem.get(groupPosition).toggle = !groupItem.get(groupPosition).toggle;
+
+
                 }
                 else{
                     eLV.collapseGroup(groupPosition);
+                    date.setVisibility(View.GONE);
 
+                    groupItem.get(groupPosition).getArrayList().set(0, new EdittextValues(""));
+                    groupItem.get(groupPosition).getArrayList().set(1, new EdittextValues(""));
+                    groupItem.get(groupPosition).getArrayList().set(2, new EdittextValues(""));
+                    groupViewHolder.btnAdd.setText("+");
 
-                    groupItem.get(groupPosition).toggle = !groupItem.get(groupPosition).toggle;
                 }
             }
         });
@@ -190,6 +203,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
+
         return convertView;
     }
 
@@ -201,11 +215,14 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
     private class GroupViewHolder {
         public TextView tvTitle;
         public Button btnAdd;
+
     }
 
     private class ChildViewHolder {
         public EditText et;
     }
+
+
 
 
 }

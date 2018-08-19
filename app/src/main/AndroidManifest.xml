@@ -12,17 +12,19 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ExerciseInDepth"/>
-        <activity android:name=".ViewData"/>
-        <activity android:name=".GraphData"/>
-        <activity android:name=".Attributions"/>
+        <activity android:name=".ExerciseInDepth" android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".ViewData" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".GraphData" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Attributions" android:theme="@style/AppTheme.NoActionBar"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

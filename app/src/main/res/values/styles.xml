@@ -19,18 +19,14 @@
         <item name ="android:colorButtonNormal">@color/shade3</item>
         <item name ="android:textAppearanceButton">@style/Button</item>
         <item name="android:windowActivityTransitions">true</item>
-
         <item name="android:windowEnterTransition">@android:transition/slide_right</item>
         <item name="android:fragmentExitTransition">@android:transition/slide_left</item>
-
-
-
-
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" >
         <item name="android:textColor">@color/shade1</item>
     </style>
+
     <style name="Button" parent="@android:style/Widget.Button">
         <item name="android:textColor">@color/shade1</item>
        <item name="android:textSize">20dp</item>
