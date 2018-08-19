@@ -1,5 +1,6 @@
 package com.halalface.powermeter2;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,13 +33,18 @@ import android.widget.ListAdapter;
 import android.widget.Toast;
 
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 //code for expandable view from https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDateSelectedListener {
     DrawerLayout drawerLayout;
     ArrayList<ListItemModel> arrayList;
     FloatingActionButton add;
@@ -49,14 +57,25 @@ public class MainActivity extends AppCompatActivity {
 
     MasterDbHelper mMasterDbHelper;
     PowerDbHelper mPowerDbHelper;
+    Context activity_c;
+
+    int calendar_date = 00000000;
+    Button calendar;
+
+    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
+    MaterialCalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //transfer layout to adapter
+        activity_c = this;
+
         dialog = new Dialog(this);
-        showAddNamePopUp();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -82,17 +101,39 @@ public class MainActivity extends AppCompatActivity {
 
 
         elv = (ExpandableListView)findViewById(R.id.listview);
-        adapter = new CustomListAdapter(MainActivity.this, arrayList);
+        adapter = new CustomListAdapter(MainActivity.this, arrayList, findViewById(R.id.c_layout));
         adapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
         elv.setAdapter(adapter);
 
-        Button btn = (Button)findViewById(R.id.show);
+        Button btn = (Button) findViewById(R.id.show);
+
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String all="";
+                if(arrayList.size() ==0){
+                    Toast.makeText(MainActivity.this, "Add Exercise first!", Toast.LENGTH_LONG).show();
+                }
                 for (int i=0; i<arrayList.size(); i++){
                     if (elv.isGroupExpanded(i)) {
+                        //removes focus. NEEDED for updating
+                        View current = getCurrentFocus();
+                        if (current != null) current.clearFocus();
+                        //removes soft keyboard
+                        Activity activity = (Activity) activity_c;
+                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        //Find the currently focused view, so we can grab the correct window token from it.
+                        View view2 = activity.getCurrentFocus();
+                        //If no view currently has focus, create a new one, just so we can grab a window token from it
+                        if (view2 == null) {
+                            view2 = new View(activity);
+                        }
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+
+
+
                         all += arrayList.get(i).getTitle()+"\n";
                         all += arrayList.get(i).getArrayList().get(0).getValue() +"\n";
                         all += arrayList.get(i).getArrayList().get(1).getValue() +"\n";
@@ -101,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         if( arrayList.get(i).getArrayList().get(0).getValue().matches("")
                                 || arrayList.get(i).getArrayList().get(1).getValue().matches("")
                                 || arrayList.get(i).getArrayList().get(2).getValue().matches("")){
-                            //Toast.makeText(MainActivity.this, "Enter Valid Entries", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Enter Valid Entries", Toast.LENGTH_LONG).show();
                         }
                         else{
                          mPowerDbHelper = new PowerDbHelper(getApplicationContext(), arrayList.get(i).getTitle().replaceAll(" ", "_"));
@@ -113,21 +154,37 @@ public class MainActivity extends AppCompatActivity {
                              Toast.makeText(MainActivity.this, "Power is less then or equal to 0", Toast.LENGTH_LONG).show();
                          }
                          else{
-                             SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
+                             //SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
                              //System.out.println(f.format(new Date()));
-                             int date = Integer.parseInt(f.format(new Date()));
-                             mPowerDbHelper.addData(power,date);
-                             Toast.makeText(MainActivity.this, power+"", Toast.LENGTH_LONG).show();
+                             //int date = Integer.parseInt(f.format(new Date()));
+                             if(calendar_date == 0){
+                                 Toast.makeText(MainActivity.this, "Pick Date Using Button Below", Toast.LENGTH_LONG).show();
+
+                             }else{
+                                 Toast.makeText(MainActivity.this, power+" "+ calendar_date, Toast.LENGTH_LONG).show();
+                                 mPowerDbHelper.addData(power,calendar_date);
+
+                             }
                          }
                         }
                     }
                 }
+
+
                 //Toast.makeText(MainActivity.this, all, Toast.LENGTH_LONG).show();
             }
         });
 
 
-
+        calendar = findViewById(R.id.calendar);
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+                showCalendar();
+                dialog.show();
+            }
+        });
 
 
         add = findViewById(R.id.add);
@@ -139,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showAddNamePopUp();
                 dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
                dialog.show();
 
@@ -176,6 +234,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    public void showCalendar(){
+
+        dialog.setContentView(R.layout.calendar);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        calendarView = dialog.findViewById(R.id.calendarView);
+        calendarView.setSelectedDate(new Date());
+        SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
+        int temp_date = Integer.parseInt(f.format(new Date()));
+        calendar_date = temp_date;
+
+        calendarView.setOnDateChangedListener(this);
+        save = (FloatingActionButton) dialog.findViewById(R.id.save);
+        save.show();
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                    dialog.dismiss();
+                    dialog.hide();
+
+
+            }
+        });
+
+
 
     }
 
@@ -253,5 +341,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         return true;
     }
+    @Override
+    public void onDateSelected(
+            @NonNull final MaterialCalendarView widget,
+            @NonNull final CalendarDay date,
+            final boolean selected) {
+        final String text = selected ? FORMATTER.format(date.getDate()) : "No Selection";
+        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        calendar_date = Integer.parseInt(text.replace("-", ""));
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
 
 }

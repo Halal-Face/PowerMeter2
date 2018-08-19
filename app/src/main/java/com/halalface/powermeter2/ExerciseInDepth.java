@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -24,15 +25,24 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-public class ExerciseInDepth extends AppCompatActivity {
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class ExerciseInDepth extends AppCompatActivity implements OnDateSelectedListener {
     DrawerLayout drawerLayout;
     ListView power_entries_ListView;
     TextView exercise_name_TextView;
@@ -41,14 +51,21 @@ public class ExerciseInDepth extends AppCompatActivity {
     PowerDbHelper mPowerDbHelper;
     MasterDbHelper mMasterDbHelper;
     EditText new_name_EditText;
-    FloatingActionButton add;
+    MaterialCalendarView CV;
     FloatingActionButton delete;
+    EditText newPower;
+    int new_power = 0;
+    int old_date = 0;
+    private static final DateFormat FORMATTER =  new SimpleDateFormat("MMM, dd, yyyy");
     int date;
+    int update_date;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.exercise_in_depth);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
 
         mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
@@ -60,19 +77,7 @@ public class ExerciseInDepth extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Edit Entries</font>"));
-
         drawerLayout = findViewById(R.id.drawer_layout);
-
-
-        System.out.println("DATE: substring !!" + date +"!!");
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -83,10 +88,9 @@ public class ExerciseInDepth extends AppCompatActivity {
                     }
                 });
 
+
         power_entries_ListView = findViewById(R.id.l_view);
         exercise_name_TextView = findViewById(R.id.name);
-
-
 
         Intent receiveIntent = getIntent();
         exercise_name = receiveIntent.getStringExtra("name");
@@ -105,23 +109,53 @@ public class ExerciseInDepth extends AppCompatActivity {
                 }
                 dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
                 dialog.show();
-                mtoast.show();
                 String item = parent.getItemAtPosition(position).toString();
-                date = Integer.parseInt(item.substring(6, 14));
+                //Toast.makeText(ExerciseInDepth.this, item.substring(6, 19), Toast.LENGTH_LONG).show();
+                try{
+                    Date calendar_date = FORMATTER.parse(item.substring(6, 19));
+                    CV.setSelectedDate(calendar_date);
+                    CV.isDynamicHeightEnabled();
+                    DateFormat spf = new SimpleDateFormat("yyyyMMdd");
+                    String newDateString = spf.format(calendar_date);
+
+
+
+                    old_date = Integer.parseInt(newDateString);
+                    update_date = Integer.parseInt(newDateString);
+
+                    Toast.makeText(ExerciseInDepth.this, update_date+"", Toast.LENGTH_LONG).show();
+
+                }catch(ParseException o){
+                    //Toast.makeText(ExerciseInDepth.this, date, Toast.LENGTH_LONG).show();
+                }
                 return false;
             }
         });
-
-        add = findViewById(R.id.add);
-        delete = findViewById(R.id.delete);
-
-
-        add.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton updateItemBttn = dialog.findViewById(R.id.save);
+        updateItemBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!newPower.getText().toString().equals("")){
+                    new_power = Integer.parseInt(newPower.getText().toString());
+                    if(new_power!=0) {
+                        if(mPowerDbHelper.updateItem(new_power, old_date, update_date)){
+                            Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power + " " + old_date + " " + update_date, Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(ExerciseInDepth.this, "error", Toast.LENGTH_LONG).show();
+
+                        }
+
+                    }
+                }
+                // Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power + " " + old_date + " " + update_date, Toast.LENGTH_LONG).show();
+
 
             }
         });
+
+
+        delete = findViewById(R.id.delete);
+
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,13 +173,16 @@ public class ExerciseInDepth extends AppCompatActivity {
     public void showEditDelete(){
 
         dialog.setContentView(R.layout.edit_delete_popup);
-
-        Button delete = dialog.findViewById(R.id.delete);
+        CV = dialog.findViewById(R.id.calendarView2);
+        //this is for new poer
+        newPower = dialog.findViewById(R.id.new_name);
+        FloatingActionButton delete = dialog.findViewById(R.id.delete);
         new_name_EditText = dialog.findViewById(R.id.new_name);
         new_name_EditText.setHint("New Power entry");
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         FloatingActionButton save = (FloatingActionButton) dialog.findViewById(R.id.save);
         save.show();
+        delete.show();
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,10 +279,30 @@ public class ExerciseInDepth extends AppCompatActivity {
         //add the data from to the arraylsit
         ArrayList<String> listData = new ArrayList<>();
         while(data.moveToNext()){
-            listData.add( "Date: " + data.getString(2)+ " Power: "+ data.getString(1));
+            try
+            {
+            Date date = new SimpleDateFormat("yyyyMMdd").parse(data.getString(2));
+            String date_string = "Date: "+ FORMATTER.format(date);
+            listData.add( date_string + "\n Power: "+ data.getString(1));
+            }
+            catch (ParseException o){
+                Toast.makeText(ExerciseInDepth.this, "Parse Error", Toast.LENGTH_LONG).show();
+
+            }
+
         }
         //used to populate the listview
         ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
         power_entries_ListView.setAdapter(adapter);
+    }
+    @Override
+    public void onDateSelected(
+            @NonNull final MaterialCalendarView widget,
+            @NonNull final CalendarDay date,
+            final boolean selected) {
+        final String text = selected ? FORMATTER.format(date.getDate()) : "No Selection";
+        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        update_date = Integer.parseInt(text.replace("-", ""));
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 }
