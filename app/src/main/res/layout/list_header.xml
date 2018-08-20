@@ -10,6 +10,7 @@
         android:layout_alignBottom="@+id/addEdittext"
         android:layout_alignParentStart="true"
         android:fontFamily="@font/ubuntu"
+        android:textColor="@color/shade4"
         android:gravity="center_vertical"
         android:text="Title"
         android:textAlignment="center"
@@ -24,6 +25,14 @@
         android:gravity="center"
         android:text="+" />
 
+    <Button
+        android:id="@+id/invis_button"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

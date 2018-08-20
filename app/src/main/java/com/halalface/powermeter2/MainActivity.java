@@ -47,9 +47,10 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements OnDateSelectedListener {
     DrawerLayout drawerLayout;
     ArrayList<ListItemModel> arrayList;
-    FloatingActionButton add;
+    FloatingActionButton add_exercise;
 
-    FloatingActionButton save;
+    FloatingActionButton save_name;
+    FloatingActionButton save_date;
     ExpandableListView elv;
     CustomListAdapter adapter;
     Dialog dialog;
@@ -57,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     MasterDbHelper mMasterDbHelper;
     PowerDbHelper mPowerDbHelper;
-    Context activity_c;
+    Context activity_context;
 
     int calendar_date = 00000000;
-    Button calendar;
+    Button calendar_button;
 
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
     MaterialCalendarView calendarView;
@@ -69,10 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        //transfer layout to adapter
-        activity_c = this;
+        //passing layout to adapter
+        activity_context = this;
 
         dialog = new Dialog(this);
 
@@ -82,13 +81,10 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add New Entries</font>"));
-
         drawerLayout = findViewById(R.id.drawer_layout);
         mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
-
-
-
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -105,23 +101,25 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         adapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
         elv.setAdapter(adapter);
 
-        Button btn = (Button) findViewById(R.id.show);
+        Button save_data_to_database = (Button) findViewById(R.id.show);
 
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        save_data_to_database.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String all="";
+
+
                 if(arrayList.size() ==0){
                     Toast.makeText(MainActivity.this, "Add Exercise first!", Toast.LENGTH_LONG).show();
                 }
+
                 for (int i=0; i<arrayList.size(); i++){
                     if (elv.isGroupExpanded(i)) {
                         //removes focus. NEEDED for updating
                         View current = getCurrentFocus();
                         if (current != null) current.clearFocus();
                         //removes soft keyboard
-                        Activity activity = (Activity) activity_c;
+                        Activity activity = (Activity) activity_context;
                         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
                         //Find the currently focused view, so we can grab the correct window token from it.
                         View view2 = activity.getCurrentFocus();
@@ -131,13 +129,6 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
                         }
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-
-
-
-                        all += arrayList.get(i).getTitle()+"\n";
-                        all += arrayList.get(i).getArrayList().get(0).getValue() +"\n";
-                        all += arrayList.get(i).getArrayList().get(1).getValue() +"\n";
-                        all += arrayList.get(i).getArrayList().get(2).getValue() +"\n";
 
                         if( arrayList.get(i).getArrayList().get(0).getValue().matches("")
                                 || arrayList.get(i).getArrayList().get(1).getValue().matches("")
@@ -149,35 +140,34 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
                          int weight = Integer.parseInt(arrayList.get(i).getArrayList().get(0).getValue());
                          int rep = Integer.parseInt(arrayList.get(i).getArrayList().get(1).getValue());
                          int set = Integer.parseInt(arrayList.get(i).getArrayList().get(2).getValue());
+                         String notes = arrayList.get(i).getArrayList().get(3).getValue().replaceAll(" ", "_");
+
                          int power = weight*rep*set;
                          if(power ==0 || power<0){
                              Toast.makeText(MainActivity.this, "Power is less then or equal to 0", Toast.LENGTH_LONG).show();
                          }
                          else{
-                             //SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
-                             //System.out.println(f.format(new Date()));
-                             //int date = Integer.parseInt(f.format(new Date()));
+
                              if(calendar_date == 0){
                                  Toast.makeText(MainActivity.this, "Pick Date Using Button Below", Toast.LENGTH_LONG).show();
 
                              }else{
+                                 //calender date gets updated automatically
                                  Toast.makeText(MainActivity.this, power+" "+ calendar_date, Toast.LENGTH_LONG).show();
-                                 mPowerDbHelper.addData(power,calendar_date);
+                                 mPowerDbHelper.addData(power,calendar_date, notes);
+
 
                              }
                          }
                         }
                     }
                 }
-
-
-                //Toast.makeText(MainActivity.this, all, Toast.LENGTH_LONG).show();
             }
         });
 
 
-        calendar = findViewById(R.id.calendar);
-        calendar.setOnClickListener(new View.OnClickListener() {
+        calendar_button = findViewById(R.id.calendar_button);
+        calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
@@ -187,13 +177,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         });
 
 
-        add = findViewById(R.id.add);
-        add.show();
-        add.setClickable(true);
-
-
-
-        add.setOnClickListener(new View.OnClickListener() {
+        add_exercise = findViewById(R.id.add_exercise);
+        add_exercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showAddNamePopUp();
@@ -203,28 +188,24 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             }
         });
 
-
-
         populateArrayList();
     }
 
     public void showAddNamePopUp(){
 
         dialog.setContentView(R.layout.add_name_pop_up);
-
-
         new_name = dialog.findViewById(R.id.new_name);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        save = (FloatingActionButton) dialog.findViewById(R.id.save);
-        save.show();
-        save.setOnClickListener(new View.OnClickListener() {
+        save_name = (FloatingActionButton) dialog.findViewById(R.id.save_name);
+        save_name.show();
+        save_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
                 String new_name_to_add = new_name.getText().toString().replaceAll(" ", "_");
                 if(!new_name_to_add.matches("")) {
                     AddData(new_name_to_add.replaceAll(" ", "_"));
+                    //create new power db for name
                     PowerDbHelper pPowerDbHelper = new PowerDbHelper(getApplicationContext(), new_name_to_add.replaceAll(" ", "_"));
                     dialog.dismiss();
                     dialog.hide();
@@ -241,30 +222,23 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
         dialog.setContentView(R.layout.calendar);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         calendarView = dialog.findViewById(R.id.calendarView);
         calendarView.setSelectedDate(new Date());
+
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
         int temp_date = Integer.parseInt(f.format(new Date()));
         calendar_date = temp_date;
 
         calendarView.setOnDateChangedListener(this);
-        save = (FloatingActionButton) dialog.findViewById(R.id.save);
-        save.show();
-        save.setOnClickListener(new View.OnClickListener() {
+        save_date = (FloatingActionButton) dialog.findViewById(R.id.save_date);
+        save_date.show();
+        save_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                     dialog.dismiss();
                     dialog.hide();
-
-
             }
         });
-
-
-
     }
 
     public void AddData(String newEntry){
@@ -278,6 +252,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             toastM("Exercise already exists");
         }
     }
+
+
     private void toastM(String m){
         Toast.makeText(this, m, Toast.LENGTH_SHORT).show();
     }
@@ -292,11 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             arrayList.add(new ListItemModel( data.getString(1).replaceAll("_", " ")));
 
         }
-        //used to populate the listview
-        //ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -315,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         }
         return super.onOptionsItemSelected(item);
     }
+
     public boolean nav(MenuItem menuItem){
         // set item as selected to persist highlight
         menuItem.setChecked(true);
@@ -341,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         return true;
     }
+
     @Override
     public void onDateSelected(
             @NonNull final MaterialCalendarView widget,

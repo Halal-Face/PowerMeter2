@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class PowerDbHelper extends SQLiteOpenHelper {
     private final String TAG = "Power Database";
+    private final String COL4 = "NOTES";
     private final String COL3 = "DATE";
     private final String COL2 = "POWER";
     private final String COL1 = "ID";
@@ -25,8 +26,10 @@ public class PowerDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL2 +" INT, " + COL3 + " INT)";
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL2 + " INT, " +
+                COL3 + " INT, " +
+                COL4 + " TEXT)";
         db.execSQL(createTable);
     }
 
@@ -44,15 +47,61 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         if(data.moveToNext()){
             int oldPower = data.getInt(0);
             int newPower = oldPower + item;
-            String updateQuery = "UPDATE " + TABLE_NAME + " SET " + COL2 +
-                    " = '" + newPower +"' WHERE " + COL3 + " = '" +
-                    date + "' AND " + COL2 + " = '" + oldPower + "'";
+            String updateQuery = "UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + newPower +"' AND " +
+                    COL4 + " = 'No Notes.'" + " WHERE " +
+                    COL3 + " = '" + date + "' AND " +
+                    COL2 + " = '" + oldPower + "'";
             db.execSQL(updateQuery);
             return true;
         }
         else{
             contentValues.put(COL2, item);
             contentValues.put(COL3, date);
+            contentValues.put(COL4, "No Notes.");
+            long result = db.insert(TABLE_NAME, null, contentValues);
+            return (result ==-1)? false :true;
+        }
+    }
+    public boolean addData(int item, int date, String notes){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String query = "SELECT " + COL2 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + date + "'";
+        Cursor data = db.rawQuery(query, null);
+        if(data.moveToNext()){
+            int oldPower = data.getInt(0);
+            int newPower = oldPower + item;
+            String updateQuery;
+            if(notes.isEmpty()||notes.matches("")) {
+                updateQuery = "UPDATE " + TABLE_NAME + " SET " +
+                        COL2 + " = '" + newPower + "' AND " +
+                        COL4 + " = '" + "No Notes." + "' WHERE " +
+                        COL3 + " = '" + date + "' AND " +
+                        COL2 + " = '" + oldPower + "'";
+            }else{
+                updateQuery = "UPDATE " + TABLE_NAME + " SET " +
+                        COL2 + " = '" + newPower + "' AND " +
+                        COL4 + " = '" + notes + "' WHERE " +
+                        COL3 + " = '" + date + "' AND " +
+                        COL2 + " = '" + oldPower + "'";
+            }
+            db.execSQL(updateQuery);
+            Log.d(TAG, "QUERY UPDATE Add: " + updateQuery);
+
+            return true;
+        }
+        else{
+            contentValues.put(COL2, item);
+            contentValues.put(COL3, date);
+            if(notes.isEmpty()||notes.matches("")){
+                contentValues.put(COL4, "No Notes.");
+
+            }else{
+                contentValues.put(COL4, notes);
+
+            }
+            Log.d(TAG, "QUERY Add: Added " + item + " " + date + " "+ notes);
+
             long result = db.insert(TABLE_NAME, null, contentValues);
             return (result ==-1)? false :true;
         }
@@ -73,29 +122,88 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         return data;
     }
 
-
+    //update via ID
     public void updateItem(int newItem, int id){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "UPDATE " + TABLE_NAME + " SET " + COL2 +
                 " = '" + newItem +"' WHERE " + COL1 + " = '" + id +"'";
         db.execSQL(query);
+        Log.d(TAG, "QUERY UPDATE POWER VIA DATE: " + query);
+
     }
+
+    //update notes
+    public boolean updateItem(String newNotes, int date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "UPDATE " + TABLE_NAME + " SET " + COL4 +
+                " = '" + newNotes +"' WHERE " + COL2 + " = '" + date +"'";
+        db.execSQL(query);
+        Log.d(TAG, "QUERY UPDATE Notes: " + query);
+
+        return  true;
+    }
+
+    //update power and date
     public boolean updateItem(int newPower, int old_date, int new_date){
         SQLiteDatabase db = this.getWritableDatabase();
         String queryCheck = "SELECT " + COL2 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + old_date + "'";
         Cursor data = db.rawQuery(queryCheck, null);
         if(data.moveToNext()){
-            String query = "UPDATE " + TABLE_NAME + " SET " +
+            db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + newPower +
+                    "' WHERE " + COL3 + " = '" + old_date +"'");
+
+            db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                    COL3 + " = '" + new_date +
+                    "' WHERE " + COL3 + " = '" + old_date +"'");
+
+            Log.d(TAG, "UPDATE " + TABLE_NAME + " SET " +
                     COL2 + " = '" + newPower + "' AND " +
                     COL3 + " = '" + new_date +
-                    "' WHERE " + COL3 + " = '" + old_date +"'";
-            db.execSQL(query);
+                    "' WHERE " + COL3 + " = '" + old_date +"'");
             return true;
         }
         return false;
     }
 
+    //update everything
+    public boolean updateItem(int new_power, int old_date, int new_date, String new_notes){
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        String queryCheck = "SELECT " + COL2 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + old_date + "'";
+        Cursor data = db.rawQuery(queryCheck, null);
+        if(data.moveToNext()){
+            //Update Power
+            String query = "UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + new_power +"' WHERE " +
+                    COL3 + " = '" + old_date +"'";
+
+            Log.d(TAG, "QUERY UPDATE ALL: " + query);
+            db.execSQL(query);
+
+            //Update new Note if it isn't Empty
+            if(!new_notes.matches("")||!new_notes.isEmpty()){
+                Log.d(TAG,"UPDATE " + TABLE_NAME + " SET "+
+                        COL4 + " = '" + new_notes + "' WHERE " +
+                        COL3 + " = '" + old_date + "'" );
+
+                db.execSQL( "UPDATE " + TABLE_NAME + " SET "+
+                        COL4 + " = '" + new_notes + "' WHERE " +
+                        COL3 + " = '" + old_date + "'" );
+            }
+            //Update Date
+            Log.d(TAG,"UPDATE " + TABLE_NAME + " SET " +
+                    COL3 + " = '" + new_date + "' WHERE "+
+                    COL2 + " = '" + new_power +"'");
+            db.execSQL( "UPDATE " + TABLE_NAME + " SET " +
+                    COL3 + " = '" + new_date + "' WHERE "+
+                    COL2 + " = '" + new_power +"'");
+            return true;
+        }
+        return false;
+    }
+
+    //delete via ID
     public void deleteItem(int id, int item){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
@@ -104,10 +212,12 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         db.execSQL(query);
         //Log.d(TAG, "QUERY DELETE: " + query);
     }
-    public void deleteItem(int id){
+
+    //delete via date
+    public void deleteItem(int date){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
-                COL1 + " = '" + id+"'";
+                COL2 + " = '" + date+"'";
         db.execSQL(query);
         //Log.d(TAG, "QUERY DELETE: " + query);
     }

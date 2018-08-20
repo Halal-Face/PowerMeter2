@@ -42,6 +42,7 @@ public class Attributions extends AppCompatActivity {
 
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -56,7 +57,9 @@ public class Attributions extends AppCompatActivity {
                 "Currently only exercises that are quantifiable by weight and sets are supported. " +
                 "This app is open sourced and can be found at <a href='https://github.com/Halal-Face/PowerMeter'>github.com/Halal-Face</a> <br><br>"+
                 "Graphs are created via the  <a href='https://github.com/PhilJay/MPAndroidChart'>MPAndroidChart</a> library.<br><br>"+
-                "Expandable listview code from <a href='https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android'> bij-ace </a><br><br>";
+                "Expandable listview code from <a href='https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android'> bij-ace </a><br><br>"+
+                "Material Calendar created via the <a href='https://github.com/prolificinteractive/material-calendarview'>material-calendarview </a> library.<br><br>"
+                ;
         mpandroid.setText(setHtml(linkText1));
         mpandroid.setMovementMethod(LinkMovementMethod.getInstance());
     }

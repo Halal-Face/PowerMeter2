@@ -55,7 +55,7 @@
                             android:gravity="center_horizontal"
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp"
-                            android:text="Add Power!"
+                            android:text="Log Power Entry!"
                             android:textAlignment="center" />
 
                         <ExpandableListView
@@ -65,7 +65,8 @@
                             android:dividerHeight="0dp"
                             android:groupIndicator="@null"
                             android:layout_below="@+id/show"
-                            android:descendantFocusability="beforeDescendants"/>
+                            android:descendantFocusability="beforeDescendants"
+                            android:divider="@color/shade3com"/>
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -93,16 +94,19 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add"
+        android:id="@+id/add_exercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_add_black_24dp"
-        android:transitionName="add"/>
+        android:backgroundTint="@color/shade4com"
+        android:transitionName="add"
+        app:borderWidth="0sp"
+        />
 
     <Button
-        android:id="@+id/calendar"
+        android:id="@+id/calendar_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"

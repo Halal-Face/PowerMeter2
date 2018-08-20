@@ -42,18 +42,7 @@
                             android:background="?attr/colorPrimary"
                             android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-                        <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
 
-                            android:fontFamily="@font/ubuntu"
-                            android:text="View your data"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.AppCompat"
-                            android:textSize="30sp"
-                            tools:layout_editor_absoluteX="162dp"
-                            tools:layout_editor_absoluteY="0dp" />
 
                         <ListView
                             android:id="@+id/listView"

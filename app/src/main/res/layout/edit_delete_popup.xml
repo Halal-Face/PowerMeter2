@@ -18,18 +18,29 @@
         >
 
         <EditText
-            android:id="@+id/new_name"
+            android:id="@+id/new_power"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="15dp"
             android:ems="10"
             android:fontFamily="@font/ubuntu"
             android:hint="Exercise Name"
+            android:inputType="number"
+            android:textAlignment="center" />
 
-            android:textAlignment="center"
-            android:inputType="number"/>
+        <EditText
+            android:id="@+id/new_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/new_power"
+            android:layout_centerHorizontal="true"
+            android:ems="10"
+            android:fontFamily="@font/ubuntu"
+            android:hint="New Notes Entry"
+            android:inputType="text"
+            android:textAlignment="center" />
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -44,8 +55,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            app:mcv_selectionColor="#00F"
-            app:mcv_showOtherDates="all" />
+            app:mcv_selectionColor="@color/shade4"
+            app:mcv_showOtherDates="all"
+            android:layout_margin="16dp"
+           />
 
     </RelativeLayout>
 
@@ -56,7 +69,11 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="invisible"
-        app:srcCompat="@android:drawable/ic_menu_save" />
+        app:srcCompat="@drawable/ic_save_white_24dp"
+        android:backgroundTint="@color/shade4com"
+        app:borderWidth="0sp"
+
+        />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/delete"
         android:layout_width="wrap_content"
@@ -64,5 +81,8 @@
         android:layout_gravity="bottom|left"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="invisible"
-        app:srcCompat="@drawable/ic_delete_black_24dp" />
+        app:srcCompat="@drawable/ic_delete_black_24dp"
+        android:backgroundTint="@color/shade4com"
+        app:borderWidth="0sp"
+        />
 </android.support.design.widget.CoordinatorLayout>

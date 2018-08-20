@@ -36,12 +36,13 @@ public class ViewData extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add New Entries</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Select Your Exercise</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -82,7 +83,7 @@ public class ViewData extends AppCompatActivity {
             listData.add(data.getString(1));
         }
         //used to populate the listview
-        ListAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listData);
+        ListAdapter adapter = new ArrayAdapter<>(this, R.layout.list_item_1, listData);
         mListView.setAdapter(adapter);
     }
 

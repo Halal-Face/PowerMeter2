@@ -36,17 +36,20 @@
             android:fontFamily="@font/ubuntu"
             android:hint="Exercise Name"
             android:inputType="textPersonName"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:backgroundTint="@color/shade3com"/>
 
 
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/save"
+        android:id="@+id/save_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="invisible"
-        app:srcCompat="@android:drawable/ic_menu_save" />
+        app:srcCompat="@drawable/ic_save_white_24dp"
+        android:backgroundTint="@color/shade3com"
+        app:borderWidth="0sp"/>
 </android.support.design.widget.CoordinatorLayout>

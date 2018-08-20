@@ -43,6 +43,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="**Exercise Name**"
+                        android:fontFamily="@font/ubuntu"
+                        android:textColor="@color/BLACK"
                         android:textAlignment="center"
                         android:layout_marginTop="20dp"/>
 
@@ -53,7 +55,9 @@
                         android:layout_marginBottom="55dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginTop="55dp">
+                        android:layout_marginTop="55dp"
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="5dp">
 
                     </ListView>
 
@@ -89,7 +93,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_delete_black_24dp"
-
+        android:backgroundTint="@color/shade4com"
+        app:borderWidth="0sp"
         />
 
 </android.support.design.widget.CoordinatorLayout>

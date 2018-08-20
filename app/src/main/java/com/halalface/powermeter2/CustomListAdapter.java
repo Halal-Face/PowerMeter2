@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.CoordinatorLayout;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +39,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
         this.mContext = context;
         this.groupItem = groupItem;
         main_view = view;
-        date = main_view.findViewById(R.id.calendar);
+        date = main_view.findViewById(R.id.calendar_button);
     }
 
     public ArrayList<ListItemModel> getGroupItem() {
@@ -91,6 +93,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
             convertView = minflater.inflate(R.layout.list_header, null);
             groupViewHolder.tvTitle = (TextView) convertView.findViewById(R.id.title);
             groupViewHolder.btnAdd = (Button) convertView.findViewById(R.id.addEdittext);
+            groupViewHolder.invis_button = (Button) convertView.findViewById(R.id.invis_button);
 
 
 
@@ -105,6 +108,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
         groupViewHolder.tvTitle.setText(groupItem.get(groupPosition).getTitle());
         if(getChildrenCount(groupPosition)==0) {
 
+            groupItem.get(groupPosition).getArrayList().add(new EdittextValues(""));
             groupItem.get(groupPosition).getArrayList().add(new EdittextValues(""));
             groupItem.get(groupPosition).getArrayList().add(new EdittextValues(""));
             groupItem.get(groupPosition).getArrayList().add(new EdittextValues(""));
@@ -132,13 +136,16 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
                     groupItem.get(groupPosition).getArrayList().set(0, new EdittextValues(""));
                     groupItem.get(groupPosition).getArrayList().set(1, new EdittextValues(""));
                     groupItem.get(groupPosition).getArrayList().set(2, new EdittextValues(""));
+                    groupItem.get(groupPosition).getArrayList().set(3, new EdittextValues(""));
                     groupViewHolder.btnAdd.setText("+");
 
                 }
             }
         });
-
-        groupViewHolder.tvTitle.setOnClickListener(new View.OnClickListener(){
+        groupViewHolder.invis_button.setClickable(true);
+        groupViewHolder.invis_button.setVisibility(View.VISIBLE);
+        groupViewHolder.invis_button.setBackgroundColor(Color.TRANSPARENT);
+        groupViewHolder.invis_button.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -198,6 +205,10 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
             case 2:
                 childViewHolder.et.setHint("Set");
                 break;
+            case 3:
+                childViewHolder.et.setHint("Notes");
+                childViewHolder.et.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
             default:
                 childViewHolder.et.setHint("Child: "+childPosition);
                 break;
@@ -215,6 +226,7 @@ public class CustomListAdapter extends BaseExpandableListAdapter {
     private class GroupViewHolder {
         public TextView tvTitle;
         public Button btnAdd;
+        public Button invis_button;
 
     }
 

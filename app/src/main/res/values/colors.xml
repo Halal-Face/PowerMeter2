@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="shade3com">#5dcefc</color>
+    <color name="shade4com">#23b1eb</color>
     <color name="shade1">#FFFFFF</color>
     <color name="shade2">#FFD0C7</color>
     <color name="shade3">#FFB5A6</color>
