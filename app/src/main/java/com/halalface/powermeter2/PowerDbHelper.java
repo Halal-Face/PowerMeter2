@@ -71,22 +71,19 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         if(data.moveToNext()){
             int oldPower = data.getInt(0);
             int newPower = oldPower + item;
-            String updateQuery;
-            if(notes.isEmpty()||notes.matches("")) {
-                updateQuery = "UPDATE " + TABLE_NAME + " SET " +
-                        COL2 + " = '" + newPower + "' AND " +
-                        COL4 + " = '" + "No Notes." + "' WHERE " +
-                        COL3 + " = '" + date + "' AND " +
-                        COL2 + " = '" + oldPower + "'";
-            }else{
-                updateQuery = "UPDATE " + TABLE_NAME + " SET " +
-                        COL2 + " = '" + newPower + "' AND " +
+            db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + newPower + "' WHERE " +
+                    COL3 + " = '" + date +"'");
+            if(!notes.isEmpty()||!notes.matches("")) {
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                        COL2 + " = '" + newPower + "' WHERE " +
+                        COL3 + " = '" + date + "'");
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
                         COL4 + " = '" + notes + "' WHERE " +
-                        COL3 + " = '" + date + "' AND " +
-                        COL2 + " = '" + oldPower + "'";
+                        COL3 + " = '" + date + "'");
+
             }
-            db.execSQL(updateQuery);
-            Log.d(TAG, "QUERY UPDATE Add: " + updateQuery);
+            Log.d(TAG, "QUERY UPDATE Add: ");
 
             return true;
         }

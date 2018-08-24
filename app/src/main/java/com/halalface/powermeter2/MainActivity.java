@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     int calendar_date = 00000000;
     Button calendar_button;
 
-    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
+    //private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     MaterialCalendarView calendarView;
 
     @Override
@@ -225,8 +226,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         calendarView = dialog.findViewById(R.id.calendarView);
         calendarView.setSelectedDate(new Date());
 
-        SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
-        int temp_date = Integer.parseInt(f.format(new Date()));
+
+        int temp_date = Integer.parseInt(dateFormat.format(new Date()));
         calendar_date = temp_date;
 
         calendarView.setOnDateChangedListener(this);
@@ -320,10 +321,11 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             @NonNull final MaterialCalendarView widget,
             @NonNull final CalendarDay date,
             final boolean selected) {
-        final String text = selected ? FORMATTER.format(date.getDate()) : "No Selection";
-        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        calendar_date = Integer.parseInt(text.replace("-", ""));
+
+        final String text = selected ? dateFormat.format(date.getDate()) : "No Selection";
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        calendar_date = Integer.parseInt(text.replace("/", "").replace("-", ""));
+        Toast.makeText(getApplicationContext(), calendar_date+"", Toast.LENGTH_SHORT).show();
     }
 
 

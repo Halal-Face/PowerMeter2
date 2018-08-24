@@ -58,7 +58,9 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
     EditText newPower;
     int new_power = 0;
     int old_date = 0;
-    private static final DateFormat FORMATTER =  new SimpleDateFormat("MMM, dd, yyyy");
+    private DateFormat FORMATTER =  new SimpleDateFormat("MMM, dd, yyyy");
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
     int date;
     int update_date;
     @SuppressLint("ClickableViewAccessibility")
@@ -97,7 +99,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         exercise_name_TextView = findViewById(R.id.name);
 
         Intent receiveIntent = getIntent();
-        exercise_name = receiveIntent.getStringExtra("name");
+        exercise_name = receiveIntent.getStringExtra("name").replace(" ", "_");
         exercise_name_TextView.setText(exercise_name.replaceAll("_", " "));
         exercise_name_TextView.setTextColor(ContextCompat.getColor(this, R.color.shade4com));
 
@@ -109,15 +111,15 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         power_entries_ListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mtoast!=null){
-                    mtoast.show();
-                }
+//                if(mtoast!=null){
+//                    mtoast.show();
+//                }
                 dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
                 dialog.show();
                 String item = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(ExerciseInDepth.this, item.substring(6, 19), Toast.LENGTH_LONG).show();
+                Toast.makeText(ExerciseInDepth.this, item.substring(9, 22), Toast.LENGTH_LONG).show();
                 try{
-                    Date calendar_date = FORMATTER.parse(item.substring(6, 19));
+                    Date calendar_date = FORMATTER.parse(item.substring(9, 22));
                     CV.setSelectedDate(calendar_date);
                     CV.isDynamicHeightEnabled();
                     DateFormat spf = new SimpleDateFormat("yyyyMMdd");
@@ -128,7 +130,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     old_date = Integer.parseInt(newDateString);
                     update_date = Integer.parseInt(newDateString);
 
-                    Toast.makeText(ExerciseInDepth.this, update_date+"", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ExerciseInDepth.this, update_date+"", Toast.LENGTH_LONG).show();
 
                 }catch(ParseException o){
                     //Toast.makeText(ExerciseInDepth.this, date, Toast.LENGTH_LONG).show();
@@ -143,8 +145,9 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                 if(!newPower.getText().toString().equals("")){
                     new_power = Integer.parseInt(newPower.getText().toString());
                     if(new_power!=0) {
+                        Toast.makeText(ExerciseInDepth.this, old_date+"", Toast.LENGTH_LONG).show();
                         if(mPowerDbHelper.updateItem(new_power, old_date, update_date, new_notes_EditText.getText().toString().replaceAll(" ", "_"))){
-                            Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power + " " + old_date + " " + update_date, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power, Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                             dialog.hide();
                         }else{
@@ -221,14 +224,6 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     dialog.dismiss();
                     dialog.hide();
                 }
-
-
-
-
-
-
-
-
                 else{
                     toastM("Please Enter a Valid name :(");
                 }
@@ -311,9 +306,11 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
             @NonNull final MaterialCalendarView widget,
             @NonNull final CalendarDay date,
             final boolean selected) {
-        final String text = selected ? FORMATTER.format(date.getDate()) : "No Selection";
-        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        update_date = Integer.parseInt(text.replace("-", ""));
+
+        String text = selected ?dateFormat.format(date.getDate()) : "No Selection";
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        update_date = Integer.parseInt(text.replace("-", "").replace("/", ""));
+
     }
 }
