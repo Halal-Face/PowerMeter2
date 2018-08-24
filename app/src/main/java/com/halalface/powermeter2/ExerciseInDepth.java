@@ -1,17 +1,23 @@
 package com.halalface.powermeter2;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -23,6 +29,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -54,11 +61,17 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
     EditText new_power_EditText;
     EditText new_notes_EditText;
     MaterialCalendarView CV;
-    FloatingActionButton delete;
+    com.github.clans.fab.FloatingActionButton delete_name;
+    com.github.clans.fab.FloatingActionButton edit_name;
+    com.github.clans.fab.FloatingActionMenu menu;
+
+
     EditText newPower;
     int new_power = 0;
     int old_date = 0;
-    private static final DateFormat FORMATTER =  new SimpleDateFormat("MMM, dd, yyyy");
+    private DateFormat FORMATTER =  new SimpleDateFormat("MMM, dd, yyyy");
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
     int date;
     int update_date;
     @SuppressLint("ClickableViewAccessibility")
@@ -68,6 +81,8 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         setContentView(R.layout.exercise_in_depth);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
+        final Drawable KEYBOARD_UP = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_keyboard_arrow_up_black_24dp, null);
+        final Drawable KEYBOARD_DOWN = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_keyboard_arrow_down_black_24dp, null);
 
         mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
 
@@ -97,7 +112,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         exercise_name_TextView = findViewById(R.id.name);
 
         Intent receiveIntent = getIntent();
-        exercise_name = receiveIntent.getStringExtra("name");
+        exercise_name = receiveIntent.getStringExtra("name").replace(" ", "_");
         exercise_name_TextView.setText(exercise_name.replaceAll("_", " "));
         exercise_name_TextView.setTextColor(ContextCompat.getColor(this, R.color.shade4com));
 
@@ -109,15 +124,12 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         power_entries_ListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mtoast!=null){
-                    mtoast.show();
-                }
                 dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
                 dialog.show();
                 String item = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(ExerciseInDepth.this, item.substring(6, 19), Toast.LENGTH_LONG).show();
+                Toast.makeText(ExerciseInDepth.this, item.substring(9, 22), Toast.LENGTH_LONG).show();
                 try{
-                    Date calendar_date = FORMATTER.parse(item.substring(6, 19));
+                    Date calendar_date = FORMATTER.parse(item.substring(9, 22));
                     CV.setSelectedDate(calendar_date);
                     CV.isDynamicHeightEnabled();
                     DateFormat spf = new SimpleDateFormat("yyyyMMdd");
@@ -128,7 +140,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     old_date = Integer.parseInt(newDateString);
                     update_date = Integer.parseInt(newDateString);
 
-                    Toast.makeText(ExerciseInDepth.this, update_date+"", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ExerciseInDepth.this, update_date+"", Toast.LENGTH_LONG).show();
 
                 }catch(ParseException o){
                     //Toast.makeText(ExerciseInDepth.this, date, Toast.LENGTH_LONG).show();
@@ -143,8 +155,9 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                 if(!newPower.getText().toString().equals("")){
                     new_power = Integer.parseInt(newPower.getText().toString());
                     if(new_power!=0) {
+                        Toast.makeText(ExerciseInDepth.this, old_date+"", Toast.LENGTH_LONG).show();
                         if(mPowerDbHelper.updateItem(new_power, old_date, update_date, new_notes_EditText.getText().toString().replaceAll(" ", "_"))){
-                            Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power + " " + old_date + " " + update_date, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power, Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                             dialog.hide();
                         }else{
@@ -161,11 +174,26 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
             }
         });
 
+        AnimatorSet set = new AnimatorSet();
+        menu = findViewById(R.id.menu);
+        menu.setIconAnimated(false);
+        menu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (menu.isOpened()) {
+                    // We will change the icon when the menu opens, here we want to change to the previous icon
+                    menu.close(true);
+                    menu.getMenuIconView().setImageDrawable(KEYBOARD_UP);
+                } else {
+                    // Since it is closed, let's set our new icon and then open the menu
+                    menu.getMenuIconView().setImageDrawable(KEYBOARD_DOWN);
+                    menu.open(true);
+                }
+            }
+        });
 
-        delete = findViewById(R.id.delete);
-
-
-        delete.setOnClickListener(new View.OnClickListener() {
+        delete_name = findViewById(R.id.delete_name);
+        delete_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mMasterDbHelper.deleteItem(exercise_name);
@@ -173,6 +201,14 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                 Intent intent = new Intent(getApplicationContext(),  MainActivity.class);
                 startActivity(intent);
 
+            }
+        });
+
+        edit_name = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.edit_name);
+        edit_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ExerciseInDepth.this, "Edit", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -221,14 +257,6 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     dialog.dismiss();
                     dialog.hide();
                 }
-
-
-
-
-
-
-
-
                 else{
                     toastM("Please Enter a Valid name :(");
                 }
@@ -311,9 +339,11 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
             @NonNull final MaterialCalendarView widget,
             @NonNull final CalendarDay date,
             final boolean selected) {
-        final String text = selected ? FORMATTER.format(date.getDate()) : "No Selection";
-        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        update_date = Integer.parseInt(text.replace("-", ""));
+
+        String text = selected ?dateFormat.format(date.getDate()) : "No Selection";
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        update_date = Integer.parseInt(text.replace("-", "").replace("/", ""));
+
     }
 }
