@@ -59,7 +59,7 @@ public class ViewData extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
+                String item = parent.getItemAtPosition(position).toString().replace(" ", "_");
                 Cursor data = mMasterDbHelper.getItemID(item);
                 int itemID = -1;
                 while(data.moveToNext()){
@@ -80,7 +80,7 @@ public class ViewData extends AppCompatActivity {
         //add the data from to the arraylsit
         ArrayList<String> listData = new ArrayList<>();
         while(data.moveToNext()){
-            listData.add(data.getString(1));
+            listData.add(data.getString(1).replaceAll("_", " "));
         }
         //used to populate the listview
         ListAdapter adapter = new ArrayAdapter<>(this, R.layout.list_item_1, listData);

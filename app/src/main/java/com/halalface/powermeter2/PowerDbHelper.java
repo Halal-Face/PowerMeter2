@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class PowerDbHelper extends SQLiteOpenHelper {
     private final String TAG = "Power Database";
+    private final String COL5 = "CHANGELOG";
     private final String COL4 = "NOTES";
     private final String COL3 = "DATE";
     private final String COL2 = "POWER";
@@ -29,7 +30,8 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL2 + " INT, " +
                 COL3 + " INT, " +
-                COL4 + " TEXT)";
+                COL4 + " TEXT, "+
+                COL5 + " TEXT)";
         db.execSQL(createTable);
     }
 
@@ -84,7 +86,6 @@ public class PowerDbHelper extends SQLiteOpenHelper {
 
             }
             Log.d(TAG, "QUERY UPDATE Add: ");
-
             return true;
         }
         else{
@@ -92,16 +93,49 @@ public class PowerDbHelper extends SQLiteOpenHelper {
             contentValues.put(COL3, date);
             if(notes.isEmpty()||notes.matches("")){
                 contentValues.put(COL4, "No Notes.");
-
             }else{
                 contentValues.put(COL4, notes);
-
             }
             Log.d(TAG, "QUERY Add: Added " + item + " " + date + " "+ notes);
-
             long result = db.insert(TABLE_NAME, null, contentValues);
             return (result ==-1)? false :true;
         }
+    }
+
+    public boolean updateChangeLog(int weight, int rep, int set, int date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String query = "SELECT " + COL5 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + date + "'";
+        Cursor data = db.rawQuery(query, null);
+        if(data.moveToNext()) {
+            String changelog = data.getString(0);
+            if(changelog==null){
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                        COL5 + " = '" + " Weight: "+ weight + " Rep: " + rep + " Set: "+ set + "\n" + "' WHERE " +
+                        COL3 + " = '" + date + "'");
+            }
+            else{
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                        COL5 + " = '" + changelog + " Weight: "+ weight + " Rep: " + rep + " Set: "+ set + "\n" + "' WHERE " +
+                        COL3 + " = '" + date + "'");
+            }
+            Log.d(TAG, "Change Log updated");
+            return true;
+        }
+        return false;
+    }
+    public String getChangeLog(int date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String query = "SELECT " + COL5 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + date + "'";
+        Cursor data = db.rawQuery(query, null);
+        if(data.moveToNext()) {
+            String changelog = data.getString(0);
+           return changelog;
+        }else{
+            return "Nothing found. ";
+        }
+
     }
 
     public Cursor getData(){

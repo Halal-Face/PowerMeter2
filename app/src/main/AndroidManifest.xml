@@ -25,6 +25,7 @@
         <activity android:name=".ViewData" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".GraphData" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Attributions" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ChangeLog" android:theme="@style/AppTheme.NoActionBar"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

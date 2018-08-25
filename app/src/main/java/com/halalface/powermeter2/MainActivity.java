@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
                                  //calender date gets updated automatically
                                  Toast.makeText(MainActivity.this, power+" "+ calendar_date, Toast.LENGTH_LONG).show();
                                  mPowerDbHelper.addData(power,calendar_date, notes);
+                                 mPowerDbHelper.updateChangeLog(weight, rep, set, calendar_date);
 
 
                              }

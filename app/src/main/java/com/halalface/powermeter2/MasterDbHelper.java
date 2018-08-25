@@ -67,7 +67,6 @@ public class MasterDbHelper extends SQLiteOpenHelper {
 
     public boolean updateItem(String newItem, int id, String oldItem){
         SQLiteDatabase db = this.getWritableDatabase();
-
         String queryCheck = "SELECT " + COL2 + " FROM " + TABLE_NAME +" WHERE " + COL2 + " = '" + newItem + "'";
         Cursor data = db.rawQuery(queryCheck, null);
         if(data.moveToNext()){

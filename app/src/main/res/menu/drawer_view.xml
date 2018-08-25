@@ -3,18 +3,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/add_data"
-            android:icon="@drawable/ic_mode_edit"
+            android:icon="@drawable/ic_mode_edit_blue_24dp"
             android:fontFamily="@font/ubuntu"
             android:title="Add Data" />
         <item
             android:id="@+id/view_data"
-            android:icon="@drawable/ic_view_list_black_24dp"
+            android:icon="@drawable/ic_view_list_blue_24dp"
             android:fontFamily="@font/ubuntu"
             android:title="View Data" />
 
         <item
             android:id="@+id/attributions"
-            android:icon="@drawable/ic_info_black_24dp"
+            android:icon="@drawable/ic_info_blue_24dp"
             android:fontFamily="@font/ubuntu"
             android:title="Attributions" />
     </group>
