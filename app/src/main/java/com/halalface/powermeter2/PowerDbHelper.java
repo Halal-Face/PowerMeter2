@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class PowerDbHelper extends SQLiteOpenHelper {
     private final String TAG = "Power Database";
@@ -256,24 +257,32 @@ public class PowerDbHelper extends SQLiteOpenHelper {
     public ArrayList<Integer> getXData(){
         //Query all x data and insert into an ArrayList
         ArrayList<Integer> xNewData = new ArrayList<Integer>();
-        String query = "SELECT " + COL1 + " FROM " + TABLE_NAME;
+        //SELECT name,somedata FROM my_table ORDER BY name
+        String query = "SELECT " + COL1 + " FROM " + TABLE_NAME + " ORDER BY " + COL3 + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             xNewData.add(cursor.getInt(cursor.getColumnIndex(COL1)));
         }
         cursor.close();
+        //Can optimize this with Binary Tree?
+        Collections.sort(xNewData, Collections.reverseOrder());
         return xNewData;
     }
     public ArrayList<Integer> getYData(){
-        //Query all y data and insert into an ArrayList
+//        //Query all y data and insert into an ArrayList
         ArrayList<Integer> yNewData = new ArrayList<>();
-        String query = "SELECT " + COL2 + " FROM " + TABLE_NAME;
+        String query = "SELECT " + COL2 + " FROM " + TABLE_NAME + " ORDER BY " + COL3 + " DESC";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             yNewData.add(cursor.getInt(cursor.getColumnIndex(COL2)));
         }
+
+
+
+
+
         cursor.close();
         return yNewData;
     }
