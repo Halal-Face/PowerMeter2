@@ -16,6 +16,6 @@
             android:id="@+id/attributions"
             android:icon="@drawable/ic_info_blue_24dp"
             android:fontFamily="@font/ubuntu"
-            android:title="Attributions" />
+            android:title="About" />
     </group>
 </menu>

@@ -31,7 +31,7 @@ public class ChangeLog extends AppCompatActivity {
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Add Data!</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#FFFFFF'>Change Log</font>"));
 
         drawerLayout = findViewById(R.id.drawer_layout);
 

@@ -55,7 +55,7 @@ public class Attributions extends AppCompatActivity {
         mpandroid = findViewById(R.id.mpandroid);
         String linkText1 = "PowerMeter is an app designed to track the relative power exerted over time when exercising. " +
                 "Currently only exercises that are quantifiable by weight and sets are supported. " +
-                "This app is open sourced and can be found at <a href='https://github.com/Halal-Face/PowerMeter'>github.com/Halal-Face</a> <br><br>"+
+                "This app is open sourced and can be found at <a href='https://github.com/Halal-Face/PowerMeter_v2'>github.com/Halal-Face</a> <br><br>"+
                 "Graphs are created via the  <a href='https://github.com/PhilJay/MPAndroidChart'>MPAndroidChart</a> library.<br><br>"+
                 "Expandable listview code from <a href='https://github.com/bij-ace/dynamic-edittext-in-expandable-listview-android'> bij-ace </a><br><br>"+
                 "Material Calendar created via the <a href='https://github.com/prolificinteractive/material-calendarview'>material-calendarview </a> library.<br><br>"

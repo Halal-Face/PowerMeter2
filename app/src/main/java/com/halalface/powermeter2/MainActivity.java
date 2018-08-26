@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
                              }else{
                                  //calender date gets updated automatically
-                                 Toast.makeText(MainActivity.this, power+" "+ calendar_date, Toast.LENGTH_LONG).show();
+                                 //Toast.makeText(MainActivity.this, power+" "+ calendar_date, Toast.LENGTH_LONG).show();
                                  mPowerDbHelper.addData(power,calendar_date, notes);
                                  mPowerDbHelper.updateChangeLog(weight, rep, set, calendar_date);
 
@@ -324,9 +324,9 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             final boolean selected) {
 
         final String text = selected ? dateFormat.format(date.getDate()) : "No Selection";
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
         calendar_date = Integer.parseInt(text.replace("/", "").replace("-", ""));
-        Toast.makeText(getApplicationContext(), calendar_date+"", Toast.LENGTH_SHORT).show();
+
     }
 
 

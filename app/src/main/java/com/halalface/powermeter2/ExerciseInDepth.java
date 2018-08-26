@@ -2,6 +2,8 @@ package com.halalface.powermeter2;
 
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -80,6 +82,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
 
         dialog = new Dialog(this);
         showEditDelete();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -141,8 +144,6 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         power_entries_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-                dialog.show();
                 String item = parent.getItemAtPosition(position).toString();
                 Toast.makeText(ExerciseInDepth.this, item.substring(9, 22), Toast.LENGTH_LONG).show();
                 try{
@@ -154,8 +155,9 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     old_date = Integer.parseInt(newDateString);
                     update_date = Integer.parseInt(newDateString);
                 }catch(ParseException o){
-
                 }
+                dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+                dialog.show();
             }
         });
         FloatingActionButton updateItemBttn = dialog.findViewById(R.id.save);
@@ -165,13 +167,17 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                 if(!newPower.getText().toString().equals("")){
                     new_power = Integer.parseInt(newPower.getText().toString());
                     if(new_power!=0) {
-                        Toast.makeText(ExerciseInDepth.this, old_date+"", Toast.LENGTH_LONG).show();
                         if(mPowerDbHelper.updateItem(new_power, old_date, update_date, new_notes_EditText.getText().toString().replaceAll(" ", "_"))){
                             Toast.makeText(ExerciseInDepth.this, "Updates: " + new_power, Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                             dialog.hide();
+
+
+                            Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
+                            intent.putExtra("name", exercise_name);
+                            startActivity(intent);
                         }else{
-                            Toast.makeText(ExerciseInDepth.this, "error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ExerciseInDepth.this, "Error  Inserting Values", Toast.LENGTH_LONG).show();
                         }
 
                     }
@@ -179,10 +185,21 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                     Toast.makeText(ExerciseInDepth.this, "Zero Power Detected", Toast.LENGTH_LONG).show();
 
                 }
-
-
             }
         });
+
+        FloatingActionButton delete_entry = dialog.findViewById(R.id.delete);
+        delete_entry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPowerDbHelper.deleteItem(old_date);
+                Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
+                intent.putExtra("name", exercise_name);
+                startActivity(intent);
+            }
+        });
+
+
 
         AnimatorSet set = new AnimatorSet();
         menu = findViewById(R.id.menu);
@@ -279,40 +296,6 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         FloatingActionButton save = (FloatingActionButton) dialog.findViewById(R.id.save);
         save.show();
         delete.show();
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mMasterDbHelper = new MasterDbHelper(getApplicationContext(), "Exercise_Database");
-                String new_power_to_add = new_power_EditText.getText().toString().replaceAll(" ", "_");
-
-                if(!new_power_to_add.matches("")) {
-
-                    System.out.println("NAME: " + exercise_name);
-                    int newItem = Integer.parseInt(new_power_to_add);
-
-                    Cursor data = mPowerDbHelper.getItemID(date);
-                    int itemID = -1;
-                    if(data.moveToNext()){
-                        itemID = data.getInt(0);
-                    }
-                    if(itemID>-1){
-                        String TABLE_NAME = mPowerDbHelper.getTABLE_NAME();
-
-                    }
-
-
-                    //mPowerDbHelper.updateItem(newItem, itemID, new_notes_to_add);
-
-                    dialog.dismiss();
-                    dialog.hide();
-                }
-                else{
-                    toastM("Please Enter a Valid name :(");
-                }
-            }
-        });
-
     }
 
     private void toastM(String m){
@@ -391,8 +374,6 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
             final boolean selected) {
 
         String text = selected ?dateFormat.format(date.getDate()) : "No Selection";
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        //Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
         update_date = Integer.parseInt(text.replace("-", "").replace("/", ""));
 
     }

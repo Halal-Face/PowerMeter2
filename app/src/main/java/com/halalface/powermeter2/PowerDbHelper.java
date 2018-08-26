@@ -206,12 +206,11 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         Cursor data = db.rawQuery(queryCheck, null);
         if(data.moveToNext()){
             //Update Power
-            String query = "UPDATE " + TABLE_NAME + " SET " +
-                    COL2 + " = '" + new_power +"' WHERE " +
-                    COL3 + " = '" + old_date +"'";
 
-            Log.d(TAG, "QUERY UPDATE ALL: " + query);
-            db.execSQL(query);
+//            Log.d(TAG, "QUERY UPDATE ALL: " + query);
+            db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                    COL2 + " = '" + new_power +"' WHERE " +
+                    COL3 + " = '" + old_date +"'");
 
             //Update new Note if it isn't Empty
             if(!new_notes.matches("")||!new_notes.isEmpty()){
@@ -229,7 +228,7 @@ public class PowerDbHelper extends SQLiteOpenHelper {
                     COL2 + " = '" + new_power +"'");
             db.execSQL( "UPDATE " + TABLE_NAME + " SET " +
                     COL3 + " = '" + new_date + "' WHERE "+
-                    COL2 + " = '" + new_power +"'");
+                    COL3 + " = '" + old_date +"'");
             return true;
         }
         return false;
@@ -249,7 +248,7 @@ public class PowerDbHelper extends SQLiteOpenHelper {
     public void deleteItem(int date){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "DELETE FROM " + TABLE_NAME + " WHERE " +
-                COL2 + " = '" + date+"'";
+                COL3 + " = '" + date+"'";
         db.execSQL(query);
         //Log.d(TAG, "QUERY DELETE: " + query);
     }
