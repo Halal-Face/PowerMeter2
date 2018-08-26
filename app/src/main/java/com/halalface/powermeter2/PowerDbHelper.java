@@ -25,7 +25,11 @@ public class PowerDbHelper extends SQLiteOpenHelper {
 
     public PowerDbHelper(Context context, String name) {
         super(context, name, null, 1);
-        TABLE_NAME = name;
+            TABLE_NAME = "_" + name;
+
+            //TABLE_NAME = name;
+
+        Log.d(TAG, "NAME: "+TABLE_NAME);
         this.context = context;
     }
 

@@ -40,11 +40,18 @@ public class MasterDbHelper extends SQLiteOpenHelper {
         Cursor data = db.rawQuery(query, null);
         if(data.moveToNext()){
             return false;
+        }else {
+            String new_exercise;
+//            if (item.matches("[0-9]+") && item.length() > 2) {
+                new_exercise = "_" + item;
+//            }else{
+//                new_exercise = item;
+//            }
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COL2, new_exercise);
+            long result = db.insert(TABLE_NAME, null, contentValues);
+            return (result == -1) ? false : true;
         }
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2, item);
-        long result = db.insert(TABLE_NAME, null, contentValues);
-        return (result ==-1)? false :true;
 
     }
 
