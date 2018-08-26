@@ -8,7 +8,10 @@ Import project to Android Studio:
 Via the playstore:
 [Playstore Link](https://play.google.com/store/apps/details?id=com.halalface.powermeter2 "Playstore Link")
 
-Note: Android 6.0+ supported as of now.
+# Compatibility
+Android Stduio 3.1.2
+
+Android 6.0+ (Marshmallow +)
 
 # How to Use
 
