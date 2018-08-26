@@ -5,8 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -295,6 +298,38 @@ public class PowerDbHelper extends SQLiteOpenHelper {
             newDb.addData(data.getInt(1), data.getInt(2) );
         }
     }
+    public void exportDB() {
+
+        PowerDbHelper mPowerDbHelper = new PowerDbHelper(context, TABLE_NAME);
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "/Power_Meter");
+        if (!exportDir.exists())
+        {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, TABLE_NAME+"_Export.csv");
+        try
+        {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = mPowerDbHelper.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while(curCSV.moveToNext())
+            {
+                //Which column you want to exprort
+                String arrStr[] ={curCSV.getString(0),curCSV.getString(1), curCSV.getString(2), curCSV.getString(3) , curCSV.getString(4)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+        }
+        catch(Exception sqlEx)
+        {
+            Log.e(TAG, sqlEx.getMessage(), sqlEx);
+        }
+    }
+
     public String getTABLE_NAME(){
         return TABLE_NAME;
     }

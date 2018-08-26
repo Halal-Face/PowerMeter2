@@ -1,19 +1,23 @@
 package com.halalface.powermeter2;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +25,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,7 +61,9 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
     com.github.clans.fab.FloatingActionButton delete_name;
     com.github.clans.fab.FloatingActionButton edit_name;
     com.github.clans.fab.FloatingActionButton save_name;
+    com.github.clans.fab.FloatingActionButton export;
     com.github.clans.fab.FloatingActionMenu menu;
+
 
 
     EditText newPower;
@@ -192,10 +199,13 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
         delete_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPowerDbHelper.deleteItem(old_date);
-                Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
-                intent.putExtra("name", exercise_name);
-                startActivity(intent);
+
+                    mPowerDbHelper.deleteItem(old_date);
+                    Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
+                    intent.putExtra("name", exercise_name);
+                    startActivity(intent);
+
+
             }
         });
 
@@ -239,25 +249,33 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                 //Toast.makeText(ExerciseInDepth.this, "Edit", Toast.LENGTH_LONG).show();
                 String newItem = edit_name_edittext.getText().toString().replaceAll(" ", "_");
                 if(!newItem.matches("") && !newItem.isEmpty()){
-                    toastM("Changing " + exercise_name +" to " + newItem);
-                    Cursor data = mMasterDbHelper.getItemID(exercise_name);
-                    int id = -1;
-                    while(data.moveToNext()){
-                        id = data.getInt(0);
-                    }
-                    if(mMasterDbHelper.updateItem(newItem, id, exercise_name)) {
-                        mPowerDbHelper = new PowerDbHelper(getApplicationContext(), exercise_name);
-                        mPowerDbHelper.updateDbName(newItem.replaceAll(" ", "_"));
-                        ExerciseInDepth.this.deleteDatabase(exercise_name);
+                    if(!newItem.matches(exercise_name)){
+                        toastM("Changing " + exercise_name +" to " + newItem);
+                        Cursor data = mMasterDbHelper.getItemID(exercise_name);
+                        int id = -1;
+                        while(data.moveToNext()){
+                            id = data.getInt(0);
+                        }
+                        if(mMasterDbHelper.updateItem(newItem, id, exercise_name)) {
+                            mPowerDbHelper = new PowerDbHelper(getApplicationContext(), exercise_name);
+                            mPowerDbHelper.updateDbName(newItem.replaceAll(" ", "_"));
+                            ExerciseInDepth.this.deleteDatabase(exercise_name);
 
+                        }
                     }
+                    else{
+                        toastM("New name is same as previous");
+                    }
+
                     //startActivity(backToEditIntent);
+                }
+                else{
+                    toastM("New Exercise name is empty :(");
                 }
                 save_name.setVisibility(View.GONE);
                 edit_name_edittext.setFocusable(false);
                 edit_name_edittext.setClickable(false);
                 edit_name_edittext.setFocusableInTouchMode(false);
-
             }
 
         });
@@ -269,10 +287,25 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
             @Override
             public void onClick(View v) {
 
-                edit_name_edittext.setFocusable(true);
-                edit_name_edittext.setClickable(true);
-                edit_name_edittext.setFocusableInTouchMode(true);
-                save_name.setVisibility(View.VISIBLE);
+                    edit_name_edittext.setFocusable(true);
+                    edit_name_edittext.setClickable(true);
+                    edit_name_edittext.setFocusableInTouchMode(true);
+                    save_name.setVisibility(View.VISIBLE);
+
+
+
+            }
+        });
+
+        export = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.export_database);
+        export.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isStoragePermissionGranted()){
+                    PowerDbHelper mPowerDbHelper = new PowerDbHelper(getApplicationContext(), exercise_name);
+                    mPowerDbHelper.exportDB();
+                }
+
 
             }
         });
@@ -375,6 +408,28 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
 
         String text = selected ?dateFormat.format(date.getDate()) : "No Selection";
         update_date = Integer.parseInt(text.replace("-", "").replace("/", ""));
+
+    }
+    public  boolean isStoragePermissionGranted() {
+
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
+                Log.v("Exercise In Depth","Permission is granted");
+                return true;
+            } else {
+
+                Log.v("Exercise In Depth","Permission is revoked");
+                ActivityCompat.requestPermissions(ExerciseInDepth.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(ExerciseInDepth.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
+                    return true;
+                }
+                else{
+                    toastM("Please Enable Read/ Write Permissions");
+                    return false;
+                }
+            }
 
     }
 }
