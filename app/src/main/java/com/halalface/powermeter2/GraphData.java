@@ -105,6 +105,7 @@ public class GraphData extends AppCompatActivity {
         yLeft.setDrawGridLines(false);
         yLeft.setDrawZeroLine(false);
         yLeft.setDrawAxisLine(false);
+        yLeft.setAxisMinimum(0f);
 
         yRight.setDrawLabels(false);
         yRight.setDrawGridLines(false);
