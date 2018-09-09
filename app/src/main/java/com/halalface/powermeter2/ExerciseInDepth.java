@@ -179,6 +179,7 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                             dialog.dismiss();
                             dialog.hide();
 
+                            mPowerDbHelper.updateChangeLog(new_power, update_date);
 
                             Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
                             intent.putExtra("name", exercise_name);
@@ -186,10 +187,12 @@ public class ExerciseInDepth extends AppCompatActivity implements OnDateSelected
                         }else{
                             Toast.makeText(ExerciseInDepth.this, "Error  Inserting Values", Toast.LENGTH_LONG).show();
                         }
-
                     }
-                }else{
-                    Toast.makeText(ExerciseInDepth.this, "Zero Power Detected", Toast.LENGTH_LONG).show();
+                }else if (mPowerDbHelper.updateItem(old_date, update_date, new_notes_EditText.getText().toString().replaceAll(" ", "_"))){
+                    Toast.makeText(ExerciseInDepth.this, "Updated Notes & Date", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ExerciseInDepth.this, ExerciseInDepth.class);
+                    intent.putExtra("name", exercise_name);
+                    startActivity(intent);
 
                 }
             }

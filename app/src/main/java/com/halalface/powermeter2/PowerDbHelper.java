@@ -132,6 +132,28 @@ public class PowerDbHelper extends SQLiteOpenHelper {
         }
         return false;
     }
+    public boolean updateChangeLog(int new_power, int date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        String query = "SELECT " + COL5 + " FROM " + TABLE_NAME +" WHERE " + COL3 + " = '" + date + "'";
+        Cursor data = db.rawQuery(query, null);
+        if(data.moveToNext()) {
+            String changelog = data.getString(0);
+            if(changelog==null){
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                        COL5 + " = '" + " UPpdate: "+ new_power + "\n" + "' WHERE " +
+                        COL3 + " = '" + date + "'");
+            }
+            else{
+                db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                        COL5 + " = '" + changelog + " UPDATE: "+ new_power + "\n" + "' WHERE " +
+                        COL3 + " = '" + date + "'");
+            }
+            Log.d(TAG, "Change Log updated");
+            return true;
+        }
+        return false;
+    }
     public String getChangeLog(int date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -175,9 +197,23 @@ public class PowerDbHelper extends SQLiteOpenHelper {
     public boolean updateItem(String newNotes, int date){
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "UPDATE " + TABLE_NAME + " SET " + COL4 +
-                " = '" + newNotes +"' WHERE " + COL2 + " = '" + date +"'";
+                " = '" + newNotes +"' WHERE " + COL3 + " = '" + date +"'";
         db.execSQL(query);
         Log.d(TAG, "QUERY UPDATE Notes: " + query);
+
+        return  true;
+    }
+    public boolean updateItem(int old_date, int new_date, String newNotes){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("UPDATE " + TABLE_NAME + " SET " + COL4 +
+                " = '" + newNotes +"' WHERE " + COL3 + " = '" + old_date +"'");
+
+        db.execSQL("UPDATE " + TABLE_NAME + " SET " +
+                COL3 + " = '" + new_date +
+                "' WHERE " + COL3 + " = '" + old_date +"'");
+
+
 
         return  true;
     }
@@ -196,10 +232,6 @@ public class PowerDbHelper extends SQLiteOpenHelper {
                     COL3 + " = '" + new_date +
                     "' WHERE " + COL3 + " = '" + old_date +"'");
 
-            Log.d(TAG, "UPDATE " + TABLE_NAME + " SET " +
-                    COL2 + " = '" + newPower + "' AND " +
-                    COL3 + " = '" + new_date +
-                    "' WHERE " + COL3 + " = '" + old_date +"'");
             return true;
         }
         return false;
