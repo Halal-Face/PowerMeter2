@@ -148,12 +148,12 @@ public class GraphData extends AppCompatActivity {
                 break;
             case R.id.view_data:
                 //System.out.println("MENU ITEM CLICKED " +"update_add");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  ViewData.class);
                 break;
 
             case R.id.attributions:
                 //System.out.println("MENU ITEM CLICKED " +"view_data");
-                intent = new Intent(getApplicationContext(),  MainActivity.class);
+                intent = new Intent(getApplicationContext(),  Attributions.class);
                 break;
 
         }
